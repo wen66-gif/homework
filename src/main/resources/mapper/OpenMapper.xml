@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fifth.mapper.OpenMapper">
+    <resultMap id="BaseResultMap" type="com.fifth.domain.Open">
+        <id column="id" property="id" />
+        <result column="classId" property="class_id" />
+        <result column="courseId" property="course_id" />
+    </resultMap>
+
+    <insert id="saveOpen">
+        insert into open(class_id,course_id)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.classId},#{item.courseId})
+        </foreach>
+    </insert>
+
+</mapper>
