@@ -1,8 +1,6 @@
 <template>
   <div id="app">
-    <div>
-      <Header/>
-    </div>
+    <Header/>
     <router-view/>
   </div>
 </template>
@@ -19,7 +17,8 @@
 
 <style>
   #app {
-    background-color: #DDDDDD;
+    overflow: auto;
+    background-color: #F1F3F6;
     width: 100%;
     height: 100%;
   }

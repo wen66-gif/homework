@@ -67,13 +67,14 @@
             ...mapState(['userToken'])
         },
         methods: {
-            ...mapMutations(['SET_TOKEN','SET_USERNAME']),
+            ...mapMutations(['SET_TOKEN','SET_USERNAME','ADD_CHOOSETYPE']),
             handleSubmit(e) {
                 e.preventDefault();
                 this.form.validateFields((err, values) => {
                     if (!err) {
                         // 将数据格式化为字符串
                         let data = qs.stringify({no:values.no,password:values.password})
+                        console.log("data"+data)
                         axios.post("/login",data).then(res=>{
 
                             if (res.data.code === "0"){

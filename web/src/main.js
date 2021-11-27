@@ -10,9 +10,10 @@ import 'ant-design-vue/dist/antd.css'
 // 注册并添加拦截器
 axios.interceptors.request.use(
     config => {
-      if (localStorage.getItem('Authorization')) {
-        config.headers.Authorization = store.state.Authorization;
         config.baseURL = "http://localhost:9000"
+        if (localStorage.getItem('Authorization')) {
+        config.headers.Authorization = store.state.Authorization;
+
       }
       return config;
     },

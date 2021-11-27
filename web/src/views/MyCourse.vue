@@ -11,13 +11,22 @@
         <div >
             <a-row :gutter="[{ xs: 8, sm: 16, md: 24, lg: 32 }, { xs: 8, sm: 16, md: 24, lg: 32 }]">
                 <a-col class="gutter-row" :span="6" v-for="course in courses" :key="course.id">
-                    <a-card :hoverable="true" style="width: 300px;height: 220px" >
-                        <span slot="extra" @click="showConfirm(course.id)" style="color: #3894FF">删除</span>
-                        <p style="text-align: center;font-weight: bold;font-size: 30px">{{course.name}}</p>
-                        <p style="color: black">教师：{{course.teacher.name}}</p>
-                        <span style="color: black">班级：</span>
-                        <span style="color: black" v-for="c in course.classesList">{{c.name+" "}}</span>
-                    </a-card>
+
+                        <a-card :hoverable="true" style="width: 300px;height: 220px" >
+                            <span slot="extra" @click="showConfirm(course.id)" style="color: #3894FF">删除</span>
+                            <router-link :to="{
+                                            path:'/course_manage',
+                                            query:{
+                                                courseId:course.id
+                                            }
+                                        }">
+                                <p style="text-align: center;font-weight: bold;font-size: 30px">{{course.name}}</p>
+                                <p style="color: black">教师：{{course.teacher.name}}</p>
+                                <span style="color: black">班级：</span>
+                                <span style="color: black" v-for="c in course.classesList">{{c.name+" "}}</span>
+                            </router-link>
+                        </a-card>
+
                 </a-col>
             </a-row>
 
@@ -27,7 +36,7 @@
                 title="新建课程"
                 :visible="visible"
                 :confirm-loading="confirmLoading"
-                @ok="handleSubmit"
+                @ok="handleOk"
                 @cancel="handleCancel"
                 okText="确定"
                 cancelText="取消"
@@ -133,14 +142,6 @@
                 this.form.resetFields()
             },
             handleOk(e) {
-
-            },
-            handleCancel(e) {
-
-                this.visible = false;
-
-            },
-            handleSubmit(e) {
                 e.preventDefault();
                 this.form.validateFields((err, values) => {
                     if (!err) {
@@ -160,6 +161,15 @@
                         this.confirmLoading = false;
                     }
                 });
+
+            },
+            handleCancel(e) {
+
+                this.visible = false;
+
+            },
+            handleSubmit(e) {
+
             },
             handleChange(value) {
                 console.log(`selected ${value}`);
