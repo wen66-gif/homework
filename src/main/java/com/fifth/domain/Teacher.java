@@ -12,6 +12,15 @@ public class Teacher {
     private int sex;
     private String password;
 
+    public Teacher() {
+    }
+
+    public Teacher(String no, String name, String password) {
+        this.no = no;
+        this.name = name;
+        this.password = password;
+    }
+
     public String getNo() {
         return no;
     }

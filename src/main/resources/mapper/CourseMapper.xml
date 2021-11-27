@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fifth.mapper.CourseMapper">
     <resultMap id="BaseResultMap" type="com.fifth.domain.Course">
-        <id column="courseId" jdbcType="INTEGER" property="id" />
-        <result column="courseName" jdbcType="VARCHAR" property="name" />
+        <id column="courseId" jdbcType="INTEGER" property="id"/>
+        <result column="courseName" jdbcType="VARCHAR" property="name"/>
         <association property="teacher" javaType="com.fifth.domain.Teacher">
             <id column="no" property="no"/>
             <result column="teacherName" property="name"/>
@@ -22,6 +22,17 @@
         left JOIN classes ON `open`.class_id = classes.id
         left JOIN course ON teach.course_id = course.id
         WHERE teacher.no=#{no}
+    </select>
+    <select id="stuCourseList" resultMap="BaseResultMap">
+        SELECT course.id courseId, course.`name` courseName, teacher.`name` teacherName, classes.`name` className
+        FROM course, teacher, classes, student, `open`,teach
+        WHERE student.class_id = classes.id AND classes.id=`open`.class_id AND course.id=`open`.course_id AND teacher.`no`=teach.tno AND teach.course_id=course.id
+        AND student.`no`=#{username}
+    </select>
+    <select id="teachCourseList" resultMap="BaseResultMap">
+        SELECT course.id courseId, course.`name` courseName, teacher.`name` teacherName, classes.`name` className
+        FROM course, teacher, teach, classes, `open`
+        WHERE teach.tno = teacher.`no` AND teach.course_id = course.id AND classes.id = `open`.class_id AND `open`.course_id = course.id AND teacher.`no` = #{username}
     </select>
     <insert id="saveCourse" parameterType="String">
         insert into course(name) values (#{name})
