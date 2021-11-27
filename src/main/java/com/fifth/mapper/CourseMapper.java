@@ -15,4 +15,17 @@ public interface CourseMapper extends BaseMapper<Course> {
     // 删除课程
     int deleteCourse(int id);
 
+    /**
+     * 查询学生课程
+     * @param username 账号标记
+     * @return
+     */
+    List<Course> stuCourseList(String username);
+
+    /**
+     * 查询教师课程
+     * @param username 账号标记
+     * @return
+     */
+    List<Course> teachCourseList(String username);
 }
