@@ -83,7 +83,6 @@ const router = new VueRouter({
 
 // 全局后置路由守卫，初始化及跳转后调用
 router.afterEach((to,from)=>{
-  console.log("后置路由守卫",to,from)
   document.title = to.meta.title || "作业管理系统"
 })
 

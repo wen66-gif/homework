@@ -17,7 +17,8 @@
         </div>
         <hr color="#e6e6e6" size="1"/>
         <div>
-            <span style="float: left">学生答案：A</span>
+            <span style="float: left">学生答案：</span>
+            <span v-for="a in answer.answer">{{a+" "}}</span>
             <div style="float: right">
                 <span >评分：</span>
                 <a-input-number :min="0" :max="question.score" v-model="score"></a-input-number>
@@ -36,8 +37,11 @@
             }
         },
         watch:{
+            // 观察分数
             score(){
+                // 如果是空即设为0，否则是他本身
                 this.score = this.score == null ? 0 : this.score
+                // 类型是数字，评分分数小于等于题目分数-->合法的分数
                 if (typeof this.score === "number" && this.score <= this.question.score)
                     this.$emit('updateScore',this.score)
             }

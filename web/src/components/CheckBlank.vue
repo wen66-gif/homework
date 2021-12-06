@@ -11,7 +11,8 @@
         </div>
         <hr color="#e6e6e6" size="1"/>
         <div>
-            <span style="float: left">学生答案：A</span>
+            <span>学生答案：</span>
+            <p v-for="(a,index) in answer.answer">（{{index+1}}）{{a}}</p>
             <div style="float: right">
                 <span style="">评分：</span>
                 <a-input-number :min="0" :max="question.score" v-model="score"></a-input-number>

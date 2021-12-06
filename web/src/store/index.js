@@ -6,22 +6,34 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-
+    // 记录点击的课程id
+    courseId:'',
+    // 记录点击的作业id
+    homeworkId:'',
     // 题目列表
     questionList:[],
     //非选择题
     unChoiceType:[],
-
+    //选择题
+    choiceType:[],
     // 当前用户名
-    username:"",
+    username:sessionStorage.getItem("username"),
     // 存储token
     Authorization:localStorage.getItem("Authorization") ? localStorage.getItem("Authorization") : '',
   },
   mutations: {
+    // courseId改变
+    SET_COURSEID(state,value){
+      state.courseId = value
+    },
+    // homeworkId改变
+    SET_HOMEWORKID(state,value){
+      state.homeworkId = value
+    },
     // 保存当前用户名
     SET_USERNAME(state,username){
-      console.log("username:"+username)
-      state.username = username
+      sessionStorage.setItem("username",username)
+      state.username = sessionStorage.getItem("username")
     },
 
     // 保存token
@@ -52,10 +64,17 @@ export default new Vuex.Store({
       state.questionList.splice(index,1)
     },
 
+    // 加载题目，修改作业时调用
+    LOAD_QUESTION(state,value){
+      state.questionList = value
+      for(let i = 0; i < state.questionList.length; i++){
+        delete state.questionList[i].no
+      }
+    },
+
     // 添加选择题
     ADD_CHOICETYPE(state,value){
       state.choiceType.push(value)
-      console.log(state.choiceType)
     },
 
     // 添加非选择题
@@ -64,9 +83,11 @@ export default new Vuex.Store({
     },
 
     // 删除一道选择题
-    DELETE_CHOICETYPE(state,index){
+    CLEARALLQUESTION(state){
       // 删除下标为index的一个元素
-      state.choiceType.splice(index,1)
+      state.choiceType = []
+      state.unChoiceType = []
+      state.questionList = []
     },
 
 

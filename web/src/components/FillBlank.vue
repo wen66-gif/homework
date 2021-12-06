@@ -64,8 +64,10 @@
         },
 
         watch:{
+            // 观察到blankContent发生改变，也就是进行更新
             blankContent(){
                 var value = {}
+                // 将id content存到value中
                 for (let i = 0;i<this.blankId.length;i++){
                     var id  = this.blankId[i].id
                     value[id] = this.blankContent[i]
@@ -73,6 +75,7 @@
                 console.log(value)
                 // 等待页面渲染完成
                 this.$nextTick(()=>{
+                    // 将数据渲染到表单
                     this.form.setFieldsValue(value)
                 })
             }
@@ -92,8 +95,6 @@
                     this.blankId.splice(index,1)
                     console.log(this.blankId)
                 }
-
-
             },
             handleSubmit(){
                 this.form.validateFields((err, values) => {
@@ -105,6 +106,7 @@
                             let id = this.blankId[i].id
                             // 将values中的属性值拿出来
                             trueAnswer.push(values[id])
+                            // 删除key为当前id的属性
                             delete values[id]
                         }
                         trueAnswer = trueAnswer.join("_")

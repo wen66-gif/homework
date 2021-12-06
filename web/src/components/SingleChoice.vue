@@ -33,7 +33,7 @@
               }
             ]"
                 >
-                    <a-radio value='1' style="margin-bottom: 20px;">
+                    <a-radio value='A' style="margin-bottom: 20px;">
                         A
                         <a-input style="margin-left: 20px;width: 400px" v-model="A"/>
                         <span style="margin-left: 10px;color: red" v-if="!A">请输入选项内容</span>
@@ -70,6 +70,7 @@
         name: "SingleChoice",
         data(){
             return{
+                // id作用：判断要更新还是新增
                 id:'',
                 A:'',
                 B:'',

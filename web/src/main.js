@@ -3,6 +3,7 @@ import App from './App.vue'
 import store from './store'
 import router from './router'
 import axios from 'axios'
+import { ConfigProvider } from 'ant-design-vue'
 
 //引入antd
 import Antd from 'ant-design-vue'
@@ -23,6 +24,7 @@ axios.interceptors.request.use(
 );
 Vue.config.productionTip = false
 Vue.use(Antd)
+Vue.use(ConfigProvider)
 new Vue({
   router,
   store,

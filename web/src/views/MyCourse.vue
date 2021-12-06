@@ -22,8 +22,11 @@
                                         }">
                                 <p style="text-align: center;font-weight: bold;font-size: 30px">{{course.name}}</p>
                                 <p style="color: black">教师：{{course.teacher.name}}</p>
-                                <span style="color: black">班级：</span>
-                                <span style="color: black" v-for="c in course.classesList">{{c.name+" "}}</span>
+                                <div style="height: 21px">
+                                    <span style="color: black">班级：</span>
+                                    <span style="color: black;" v-for="c in course.classesList">{{c.name+" "}}</span>
+                                </div>
+
                             </router-link>
                         </a-card>
 

@@ -18,13 +18,14 @@
         <!--作业名位置-->
         <div style="height: 50px; line-height: 50px; border-bottom: 1px solid #E1E3E6; display: flex;background-color: white">
 
-            <div style="width: 250px; padding-left: 30px; font-weight: bold; color: black" >标题：
-                <a-input placeholder="未命名作业" v-model="homeworkName" style="width: 150px;border: none"></a-input>
+            <div style="width: 400px; padding-left: 30px; font-weight: bold; color: black" >标题：
+                <a-input placeholder="未命名作业" v-model="homeworkName" style="width: 150px;border: none"/>
+                <span style="color: red;font-size: 12px" v-if="display">请输入作业名称！</span>
             </div>
             <div style="flex: 1"></div>
             <div style="width: 200px; ">
-                <a-button>返回</a-button>
-                <a-button type="primary" style="margin-left: 30px"> 保存</a-button>
+                <a-button @click="back">返回</a-button>
+                <a-button type="primary" style="margin-left: 30px" @click="saveHomework">保存</a-button>
             </div>
         </div>
         <!--面包屑-->
@@ -34,7 +35,8 @@
                         path:'/mycourse'
                     }">我教的课</router-link></a-breadcrumb-item>
                 <a-breadcrumb-item><router-link :to="{
-                    path:'/course_manage'
+                    path:'/course_manage',
+                    query:{courseId:this.courseId,activeKey:2}
                 }">课程管理</router-link></a-breadcrumb-item>
                 <a-breadcrumb-item>编辑作业</a-breadcrumb-item>
             </a-breadcrumb>
@@ -68,27 +70,25 @@
             <div id="editPanel" style="overflow: auto">
                 <div>
                     <a-tabs v-model="activeKey"  @change="callback" @tabClick="clearForm">
-                        <a-tab-pane :key="1" tab="单选题" >
-                            <SingleChoice ref="single"/>
+                        <a-tab-pane :key="1" tab="单选题" :forceRender="true">
+                            <SingleChoice ref="single" />
                         </a-tab-pane>
-                        <a-tab-pane :key="2" tab="多选题">
-                            <MultiChoice ref="multi"/>
+                        <a-tab-pane :key="2" tab="多选题" :forceRender="true">
+                            <MultiChoice ref="multi" />
                         </a-tab-pane>
-                        <a-tab-pane :key="3" tab="判断题">
-                            <Judgment ref="judge"/>
+                        <a-tab-pane :key="3" tab="判断题" :forceRender="true">
+                            <Judgment ref="judge" />
                         </a-tab-pane>
-                        <a-tab-pane :key="4" tab="填空题">
-                            <FillBlank ref="blank"/>
+                        <a-tab-pane :key="4" tab="填空题" :forceRender="true">
+                            <FillBlank ref="blank" />
                         </a-tab-pane>
-                        <a-tab-pane :key="5" tab="简答题">
-                            <ShortAnswer ref="short"/>
+                        <a-tab-pane :key="5" tab="简答题" :forceRender="true">
+                            <ShortAnswer ref="short" />
                         </a-tab-pane>
                     </a-tabs>
                 </div>
             </div>
         </div>
-
-
     </div>
 </template>
 
@@ -100,19 +100,46 @@
     import FillBlank from "../components/FillBlank";
     import ShortAnswer from "../components/ShortAnswer";
     import {nanoid} from "nanoid";
-
+    import axios from 'axios';
+    import qs from 'qs'
     export default {
         name: "EditHomework",
         components: {ShortAnswer, FillBlank, Judgment, MultiChoice, SingleChoice},
         data(){
             return{
+                display:false,
                 activeKey:1,
                 homeworkName:"",
             }
         },
         computed:{
             ...mapGetters(['totalScore']),
-            ...mapState(['questionList']),
+            ...mapState(['questionList','choiceType','unChoiceType','courseId']),
+
+        },
+        mounted() {
+            // id不为空，获取作业所有题目
+          if (this.$route.query.homeworkId != null){
+              axios.get("/homework/getAllQuestion",{
+                  params:{
+                      homeworkId: this.$route.query.homeworkId
+                  }
+              }).then(res=>{
+                  this.LOAD_QUESTION(res.data.data)
+              })
+              // 获取作业名称
+              axios.get("/homework/getHomeworkName",{
+                  params:{homeworkId:this.$route.query.homeworkId
+                  }
+              }).then(res=>{
+                  this.homeworkName = res.data.data
+              })
+              this.SET_HOMEWORKID(this.$route.query.homeworkId)
+          }
+          else {
+              this.CLEARALLQUESTION()
+          }
+          this.SET_COURSEID(this.$route.query.courseId)
 
         },
         methods:{
@@ -151,7 +178,6 @@
                 }
             },
             detail(index){
-                console.log(index)
                 var detail = this.questionList[index]
                 switch (detail.type) {
                     case 1:
@@ -166,12 +192,12 @@
                     case 2:
                         this.activeKey=2
                         var choiceArr = detail.trueAnswer.split("_")
-                        this.$refs.multi.form.setFieldsValue({"score":detail.score,"title":detail.title,"trueAnswer":choiceArr})
-                        this.$refs.multi.A = detail.A
-                        this.$refs.multi.B = detail.B
-                        this.$refs.multi.C = detail.C
-                        this.$refs.multi.D = detail.D
-                        this.$refs.multi.id = detail.id
+                                    this.$refs.multi.form.setFieldsValue({"score":detail.score,"title":detail.title,"trueAnswer":choiceArr})
+                                    this.$refs.multi.A = detail.A
+                                    this.$refs.multi.B = detail.B
+                                    this.$refs.multi.C = detail.C
+                                    this.$refs.multi.D = detail.D
+                                    this.$refs.multi.id = detail.id
                         break
                     case 3:
                         this.activeKey=3
@@ -202,10 +228,89 @@
                         break
                 }
             },
+            saveHomework(){
+                // 没有输入作业名
+                if (this.homeworkName.length == 0){
+                    this.display = true
+                }
+                else {
+                    this.display = false
+                    this.questionList.forEach((q,i)=>{
+                        // 添加题号属性
+                        q.no = i+1
+                        // 删除id属性
+                        delete q.id
+
+                        // 将选择题，非选择题分类
+                        if (q.type==1 || q.type==2){
+                            this.ADD_CHOICETYPE(q)
+                        }
+                        else {
+                            this.ADD_UNCHOICETYPE(q)
+                        }
+                    })
+
+                    // console.log("选择题：",this.choiceType)
+                    // console.log("非选择题：",this.unChoiceType)
+                    // let data = qs.stringify({name:this.homeworkName,score:this.totalScore,choice:this.choiceType,unchoice:this.unChoiceType},{indices:false})
+                    // console.log(data)
+                    // let data = JSON.stringify({courseId:this.$route.query.courseId,name:this.homeworkName,score:this.totalScore,choice:this.choiceType,unchoice:this.unChoiceType})
+                    // console.log(d)
+                    // id不为空，进行更新作业
+                    if (this.$route.query.homeworkId != null) {
+                        let data = JSON.stringify({homeworkId:this.$route.query.homeworkId,name:this.homeworkName,score:this.totalScore,choice:this.choiceType,unchoice:this.unChoiceType})
+                        console.log(data)
+                        axios.put("/homework/updateHomework",data,{headers: {
+                                'Content-Type': 'application/json'
+                            }}).then(res=>{
+                            if (res.data.code==="0"){
+                                // 清除vuex保存的题目
+                                this.CLEARALLQUESTION()
+                                this.$router.push({
+                                    path:'/homeworkrep',
+                                    query:{
+                                        courseId:this.$route.query.courseId
+                                    }
+                                })
+                                this.$message.success("更新作业成功")
+                            }
+                            else if (res.data.code==="-2"){
+                                this.$message.error(res.data.msg)
+                            }
+                        })
+                    }
+                    else {
+                        // id为空，新增作业
+                        let data = JSON.stringify({courseId:this.$route.query.courseId,name:this.homeworkName,score:this.totalScore,choice:this.choiceType,unchoice:this.unChoiceType})
+                        axios.post("/homework/addHomework",data,{headers: {
+                                'Content-Type': 'application/json'
+                            }}).then(res=>{
+                            if (res.data.code==="0"){
+                                this.CLEARALLQUESTION()
+                                this.$router.push({
+                                    path:'/homeworkrep',
+                                    query:{
+                                        courseId:this.$route.query.courseId
+                                    }
+                                })
+                                this.$message.success("添加作业成功")
+                            }
+                            else if (res.data.code==="-2"){
+                                this.$message.error(res.data.msg)
+                            }
+                        })
+                    }
+                }
+
+            },
             callback(){
 
             },
-            ...mapMutations(['DEL_QUESTION']),
+            // 返回上一页
+            back(){
+                this.$router.go(-1);//返回上一层
+            },
+            ...mapMutations(['LOAD_QUESTION','DEL_QUESTION','ADD_CHOICETYPE','ADD_UNCHOICETYPE','CLEARALLQUESTION','SET_COURSEID','SET_HOMEWORKID']),
 
         }
     }

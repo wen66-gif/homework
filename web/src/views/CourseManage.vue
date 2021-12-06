@@ -13,7 +13,7 @@
             </div>
             <div style="width: 95%;height: 85%;margin-left:30px;margin-right:30px;background-color: white;">
                 <div style="padding-left: 20px">
-                    <a-tabs default-active-key="1" size="large" :animated="false" :tabBarGutter=100>
+                    <a-tabs v-model="activeKey" size="large" :animated="false" :tabBarGutter=100>
                         <a-tab-pane key="1" tab="班级管理">
                             <a-button type="primary" @click="addClass">
                                 导入班级
@@ -68,8 +68,8 @@
                             <!--班级筛选-->
                             <div style="margin-top: 20px">
                                 <span style="color: black;margin: 10px">作业列表</span>
-                                <a-select default-value="-1" style="width: 180px;margin-left: 10px" @change="handleChange">
-                                    <a-select-option value="-1">
+                                <a-select :default-value="-1" style="width: 180px;margin-left: 10px" @change="handleChange">
+                                    <a-select-option :value="-1">
                                         全部班级
                                     </a-select-option>
                                     <a-select-option v-for="c in selectedClasses" :key="c.id">
@@ -78,17 +78,17 @@
                                 </a-select>
                             </div>
                             <div style="height: 400px; overflow:auto;margin-top: 10px;">
-                                <div v-for="h in homework" :key="h.homeworkId" style="border:2px solid #eee;height: 60px;width: 80%;padding: 5px;margin-top: 10px">
+                                <div v-for="h in homework" :key="h.id" style="border:2px solid #eee;height: 60px;width: 80%;padding: 5px;margin-top: 10px">
                                     <div style="float: left">
                                         <div>
-                                            <span style="color: black;font-size: 18px;">{{h.homeworkName}}</span>
+                                            <span style="color: black;font-size: 18px;">{{h.name}}</span>
                                         </div>
                                         <div>
-                                            <span style="width: 10%;" v-for="c in h.classes">{{c.className+" "}}</span>
+                                            <span style="width: 10%;" v-for="c in h.classesList">{{c.name+" "}}</span>
                                         </div>
                                     </div>
-                                    <a-button type="danger"  @click="showConfirm(h.homeworkId)" style="float: right ;margin-top: 10px">删除</a-button>
-                                    <a-button type="primary"  @click="toSubmitList(h.homeworkId)" style="float: right ;margin-top: 10px;margin-right: 30px">查看</a-button>
+                                    <a-button type="danger"  @click="showConfirm(h.id)" style="float: right ;margin-top: 10px">删除</a-button>
+                                    <a-button type="primary"  @click="toSubmitList(h.id)" style="float: right ;margin-top: 10px;margin-right: 30px">查看</a-button>
                                 </div>
                             </div>
                         </a-tab-pane>
@@ -106,56 +106,17 @@
 <script>
     import qs from "qs";
     import axios from "axios";
+    import {mapMutations, mapState} from "vuex";
 
     export default {
         name: "ClassManage",
         data() {
             return {
-                homework:[
-
-                    {
-                        homeworkId:"001",
-                        homeworkName:"作业一",
-                        classes:[
-                            {
-                                classId:"1",
-                                className:"A班"
-                            },
-                            {
-                                classId:"2",
-                                className:"软工1903"
-                            }
-                        ]
-                    },
-                    {
-                        homeworkId:"001",
-                        homeworkName:"作业一",
-                        classes:[
-                            {
-                                classId:"1",
-                                className:"A班"
-                            },
-                            {
-                                classId:"2",
-                                className:"软工1903"
-                            }
-                        ]
-                    },
-                    {
-                        homeworkId:"002",
-                        homeworkName:"作业二",
-                        classes:[
-                            {
-                                classId:"1",
-                                className:"A班"
-                            },
-                            {
-                                classId:"2",
-                                className:"B班"
-                            }
-                        ]
-                    }
-                ],
+                activeKey:"1",
+                // 筛选作业
+                homework:[],
+                // 所有作业
+                allHomework:[],
                 // 已经选上的班级
                 selectedClasses:[],
                 // 未选上的班级
@@ -169,10 +130,15 @@
             };
         },
         mounted() {
-
+            this.SET_COURSEID(this.$route.query.courseId)
             this.load(this.$route.query.courseId)
+            if (this.$route.query.activeKey) {
+                this.activeKey = this.$route.query.activeKey
+                console.log("面板：",this.activeKey)
+            }
         },
         methods:{
+            ...mapMutations(['SET_COURSEID']),
             load(courseId){
                 // 获取已选择的班级
               axios.get("/selectedClasses",{
@@ -181,13 +147,20 @@
                   }
               }).then(res=>{
                   if (res.data.code==="0"){
-                      this.selectedClasses = res.data.data
+                      // filter过滤null元素
+                      this.selectedClasses = res.data.data.filter(n => n)
                   }
               })
                 // 获取未选上的班级
                 axios.get("/unselectClasses",{params:{courseId}}).then(res=>{
                     if (res.data.code==="0"){
                         this.unselectClasses = res.data.data
+                    }
+                })
+                axios.get("/homework/allPublishHomework",{params:{courseId}}).then(res=>{
+                    if (res.data.code==="0"){
+                        this.homework = this.allHomework = res.data.data
+
                     }
                 })
             },
@@ -208,7 +181,12 @@
                 })
             },
             toEditHomework(){
-                this.$router.push('/edit_homework')
+                this.$router.push({
+                    path:'/edit_homework',
+                    query:{
+                        courseId:this.$route.query.courseId
+                    }
+                })
             },
             //显示导入班级对话框
             addClass() {
@@ -219,12 +197,12 @@
                 e.preventDefault();
                 this.form.validateFields((err, values) => {
                     if (!err) {
-                        let data = qs.stringify({selectClass:values.selectClass},{arrayFormat:"brackets"})
-                        console.log('Received values of form: ', data);
-                        axios.post("/teacher/import_class",data).then(res=>{
+                        let data = qs.stringify({selectClass:values.selectClass,courseId:this.$route.query.courseId},{arrayFormat:"brackets"})
+                        console.log(data)
+                        axios.post("/import_class",data).then(res=>{
                             if (res.data.code === "0"){
                                 this.$message.success("导入班级成功")
-                                this.load()
+                                this.load(this.$route.query.courseId)
                             }
                             else{
                                 this.$message.error("导入班级失败")
@@ -243,8 +221,23 @@
             handleSubmit(e) {
 
             },
+            // 筛选班级
             handleChange(value) {
-                console.log(`selected ${value}`);
+                this.homework = []
+                var allHomework = this.allHomework
+                if (value == -1){
+                    this.homework = allHomework
+                }
+                else {
+                    for (let i = 0; i < allHomework.length; i++){
+                        allHomework[i].classesList.forEach((classes)=>{
+                            if (classes.id == value){
+                                this.homework.push(allHomework[i])
+                                return
+                            }
+                        })
+                    }
+                }
             },
             handleDeleteClass(id){
                 var that = this
@@ -273,7 +266,7 @@
                 });
             },
             //删除作业确认框
-            showConfirm(id){
+            showConfirm(homeworkId){
                 var that = this
                 this.$confirm({
                     title: '提示',
@@ -281,14 +274,14 @@
                     okText:'确定',
                     cancelText:'取消',
                     onOk() {
-                        axios.delete("/teacher/delete_homework_record",{
+                        axios.delete("/delete_homework_record",{
                             params:{
-                                id
+                                homeworkId
                             }
                         }).then(res=>{
                             if (res.data.code==="0") {
                                 that.$message.success("删除作业成功")
-                                that.load()
+                                that.load(that.$route.query.courseId)
                             }
                             else {
                                 that.$message.error("删除作业失败")
