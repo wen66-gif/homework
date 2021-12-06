@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fifth.mapper.AnswerSummaryMapper">
+    <resultMap id="BaseResultMap" type="com.fifth.domain.AnswerSummary">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="no" jdbcType="VARCHAR" property="no" />
+        <result column="submitTime" jdbcType="VARCHAR" property="submitTime"/>
+        <result column="score" jdbcType="FLOAT" property="score"/>
+        <result column="className" property="className"/>
+        <association property="student" javaType="com.fifth.domain.Student">
+            <result column="stuName" property="name"/>
+        </association>
+        <association property="classes" javaType="com.fifth.domain.Classes">
+            <id column="classId" property="id"/>
+            <result column="className" property="name"/>
+        </association>
+    </resultMap>
+    <select id="findSubmitList" resultMap="BaseResultMap">
+        select ans.id, ans.student_no no,s.`name` stuName, c.id classId, c.`name` className, ans.submit_time submitTime, ans.score score
+        from answer_summary ans
+        join student s on ans.student_no=s.`no`
+        join classes c on s.class_id=c.id
+        where ans.homework_id=#{homeworkId}
+        <if test="classList!=null and classList.size() > 0">
+            and c.name in
+            <foreach item="name" collection="classList" open="(" separator="," close=")">
+                #{name}
+            </foreach>
+        </if>
+
+
+    </select>
+
+    <select id="findUnSubmitList" resultMap="BaseResultMap">
+        select s.no no, s.name stuName, c.name className
+        from student s
+        join classes c on s.class_id=c.id
+        join class_homework on class_homework.class_id=c.id
+        where class_homework.homework_id=#{homeworkId} and s.no not in
+        (
+        select ans.student_no no
+        from answer_summary ans
+        join student s on ans.student_no=s.`no`
+        join classes c on s.class_id=c.id
+        where ans.homework_id=#{homeworkId}
+        )
+        <if test="classList!=null and classList.size() > 0">
+            and c.name in
+            <foreach item="name" collection="classList" open="(" separator="," close=")">
+                #{name}
+            </foreach>
+        </if>
+
+
+    </select>
+
+</mapper>
