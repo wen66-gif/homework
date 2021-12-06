@@ -10,4 +10,5 @@ import java.util.List;
 @Mapper
 public interface OpenMapper extends BaseMapper<Open> {
     int saveOpen(List<Open> openList);
+
 }

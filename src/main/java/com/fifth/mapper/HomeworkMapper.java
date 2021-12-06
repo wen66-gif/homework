@@ -20,4 +20,10 @@ public interface HomeworkMapper extends BaseMapper<Homework> {
      * @return
      */
     List<Homework> selectHomeWork(String sno, Integer courseId);
+
+    // 教师端查询某一课程下所有作业
+    List<Homework> allPublishHomework(int courseId);
+
+    // 查询指定作业
+    Homework oneHomework(int homeworkId);
 }

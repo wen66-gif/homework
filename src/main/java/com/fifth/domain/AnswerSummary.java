@@ -1,29 +1,57 @@
 package com.fifth.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.util.Date;
 
-/****
- * @Author:Anonym
- * @Description:AnswerSummary构建
- * @Date 2021/11/26 00:00
- *****/
 @TableName(value = "answer_summary")
 public class AnswerSummary implements Serializable {
 
     @TableId(value = "id")
     private Integer id;//
 
-    private String studentNo;//学生账号
+    private String no;//学生账号
 
     private Integer homeworkId;//作业id
 
-    private Date finishTime;//完成时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    private Date submitTime;//完成时间
 
-    private Integer score;//总分
+    private Float score;//总分
+    @TableField(exist = false)
+    private Student student;//学生
+    @TableField(exist = false)
+    private Classes classes;//班级
+    @TableField(exist = false)
+    private String className;
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public Classes getClasses() {
+        return classes;
+    }
+
+    public void setClasses(Classes classes) {
+        this.classes = classes;
+    }
 
     //get方法
     public Integer getId() {
@@ -36,13 +64,13 @@ public class AnswerSummary implements Serializable {
     }
 
     //get方法
-    public String getStudentNo() {
-        return studentNo;
+    public String getNo() {
+        return no;
     }
 
     //set方法
-    public void setStudentNo(String studentNo) {
-        this.studentNo = studentNo;
+    public void setNo(String no) {
+        this.no = no;
     }
 
     //get方法
@@ -56,22 +84,22 @@ public class AnswerSummary implements Serializable {
     }
 
     //get方法
-    public Date getFinishTime() {
-        return finishTime;
+    public Date getSubmitTime() {
+        return submitTime;
     }
 
     //set方法
-    public void setFinishTime(Date finishTime) {
-        this.finishTime = finishTime;
+    public void setSubmitTime(Date submitTime) {
+        this.submitTime = submitTime;
     }
 
     //get方法
-    public Integer getScore() {
+    public Float getScore() {
         return score;
     }
 
     //set方法
-    public void setScore(Integer score) {
+    public void setScore(Float score) {
         this.score = score;
     }
 }

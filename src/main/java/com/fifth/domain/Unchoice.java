@@ -24,7 +24,7 @@ public class Unchoice implements Serializable {
 
     private String trueAnswer;//正确答案
 
-    private Integer score;//分数
+    private float score;//分数
 
     private Integer homeworkId;//作业id
 
@@ -79,12 +79,12 @@ public class Unchoice implements Serializable {
     }
 
     //get方法
-    public Integer getScore() {
+    public float getScore() {
         return score;
     }
 
     //set方法
-    public void setScore(Integer score) {
+    public void setScore(float score) {
         this.score = score;
     }
 

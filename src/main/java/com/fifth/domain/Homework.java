@@ -1,10 +1,14 @@
 package com.fifth.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /****
  * @Author:Anonym
@@ -14,16 +18,56 @@ import java.util.Date;
 @TableName(value = "homework")
 public class Homework implements Serializable {
 
-    @TableId(value = "id")
+    @TableId(value = "id",type = IdType.AUTO)
     private Integer id;//
 
     private String name;//作业名称
 
+    private float score;//总分
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date createTime;//作业创建时间
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    private Date updateTime;//作业更新时间
 
     private Integer courseId;//课程id
 
-    private String score;//总分
+    @TableField(exist = false)
+    private List<Classes> classesList;
+
+    public Homework() {
+    }
+
+    public Homework(String name, float score, Date createTime, Integer courseId) {
+        this.name = name;
+        this.createTime = createTime;
+        this.courseId = courseId;
+        this.score = score;
+    }
+
+    public Homework(Integer id, String name, float score, Date updateTime) {
+        this.id = id;
+        this.name = name;
+        this.score = score;
+        this.updateTime = updateTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public List<Classes> getClassesList() {
+        return classesList;
+    }
+
+    public void setClassesList(List<Classes> classesList) {
+        this.classesList = classesList;
+    }
 
     //get方法
     public Integer getId() {
@@ -66,12 +110,12 @@ public class Homework implements Serializable {
     }
 
     //get方法
-    public String getScore() {
+    public float getScore() {
         return score;
     }
 
     //set方法
-    public void setScore(String score) {
+    public void setScore(float score) {
         this.score = score;
     }
 }

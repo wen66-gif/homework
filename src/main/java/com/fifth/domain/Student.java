@@ -1,5 +1,6 @@
 package com.fifth.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -24,6 +25,9 @@ public class Student implements Serializable {
 
     private Integer classId;//
 
+    @TableField(exist = false)
+    private Classes classes;//班级
+
     public Student() {
     }
 
@@ -31,6 +35,14 @@ public class Student implements Serializable {
         this.no = no;
         this.name = name;
         this.password = password;
+    }
+
+    public Classes getClasses() {
+        return classes;
+    }
+
+    public void setClasses(Classes classes) {
+        this.classes = classes;
     }
 
     //get方法

@@ -1,12 +1,19 @@
 package com.fifth.controller;
 
+import ch.qos.logback.core.pattern.color.ANSIConstants;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fifth.common.Result;
 import com.fifth.domain.AnswerSummary;
+import com.fifth.domain.Open;
+import com.fifth.domain.Student;
 import com.fifth.mapper.AnswerSummaryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /****
@@ -22,6 +29,44 @@ public class AnswerSummaryController {
 
     @Autowired
     private AnswerSummaryMapper answerSummaryMapper;
+
+    @GetMapping("/findList")
+    public Result findSubmitList(
+            @RequestParam int pageNum,
+            @RequestParam int pageSize,
+            @RequestParam int homeworkId,
+            @RequestParam(required = false) String sortField,
+            @RequestParam(required = false) String sortOrder,
+            @RequestParam(required = false,value = "className[]") String className[],
+            @RequestParam int value){
+        Page<AnswerSummary> page = new Page<>(pageNum, pageSize);
+        OrderItem orderItem = new OrderItem();
+        orderItem.setColumn(sortField);
+        if (sortOrder!=null){
+            if (sortOrder.equals("ascend")){
+                orderItem.setAsc(true);
+            }
+            else {
+                orderItem.setAsc(false);
+            }
+        }
+        List<OrderItem> orderItems = new ArrayList<>();
+        orderItems.add(orderItem);
+        page.setOrders(orderItems);
+        List<String> classList = new ArrayList<>();
+        if (className != null){
+            for (String c : className) {
+                classList.add(c);
+            }
+        }
+        if (value==1){  // 查询已交列表
+            return Result.success(answerSummaryMapper.findSubmitList(page, homeworkId, classList));
+        }
+        else {  // 查询未交列表
+            return Result.success(answerSummaryMapper.findUnSubmitList(page, homeworkId, classList));
+        }
+
+    }
 
     /***
      * 根据ID删除

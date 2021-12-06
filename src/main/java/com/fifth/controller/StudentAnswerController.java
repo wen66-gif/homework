@@ -1,8 +1,13 @@
 package com.fifth.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.fifth.common.Result;
+import com.fifth.domain.AnswerSummary;
 import com.fifth.domain.StudentAnswer;
+import com.fifth.mapper.HomeworkMapper;
 import com.fifth.mapper.StudentAnswerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +27,19 @@ public class StudentAnswerController {
 
     @Autowired
     private StudentAnswerMapper studentAnswerMapper;
+
+    // 获取学生答案
+    @GetMapping("/getStudentAnswer")
+    public Result getStudentAnswer(@RequestParam int studentNo, @RequestParam int homeworkId) {
+        try{
+            List<StudentAnswer> studentAnswers = studentAnswerMapper.selectList(new QueryWrapper<StudentAnswer>()
+                    .eq("student_no", studentNo).eq("homework_id", homeworkId));
+            return Result.success(studentAnswers);
+        }catch (Exception e){
+            return Result.error("-1","获取学生答案失败");
+        }
+    }
+
 
     /***
      * 根据ID删除数据

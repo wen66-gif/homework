@@ -79,13 +79,13 @@ public class StudentController {
 
     /***
      * 根据ID查询Student数据
-     * @param id
+     * @param studentNo
      * @return
      */
-    @GetMapping("/{id}")
-    public Result<Student> findById(@PathVariable String id) {
+    @GetMapping("/getStudent")
+    public Result<Student> findById(@RequestParam String studentNo) {
         //调用studentMapper实现根据主键查询Student
-        Student student = studentMapper.selectById(id);
+        Student student = studentMapper.getStudent(studentNo);
         return Result.success(student);
     }
 

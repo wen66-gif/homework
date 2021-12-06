@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.fifth.domain.Choice;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /****
  * @Author:Anonym
  * @Description:Choice的Dao
@@ -11,4 +13,5 @@ import org.apache.ibatis.annotations.Mapper;
  *****/
 @Mapper
 public interface ChoiceMapper extends BaseMapper<Choice> {
+    int saveChoice(List<Choice> choiceList);
 }

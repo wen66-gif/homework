@@ -1,14 +1,14 @@
 package com.fifth.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.fifth.domain.ClassCourse;
+import com.fifth.domain.ClassHomework;
 import org.apache.ibatis.annotations.Mapper;
 
 /****
  * @Author:Anonym
- * @Description:ClassCourse的Dao
+ * @Description:ClassHomework的Dao
  * @Date 2021/11/26 00:00
  *****/
 @Mapper
-public interface ClassCourseMapper extends BaseMapper<ClassCourse> {
+public interface ClassHomeworkMapper extends BaseMapper<ClassHomework> {
 }

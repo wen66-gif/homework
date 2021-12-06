@@ -10,4 +10,46 @@
         select * from classes
     </select>
 
+    <select id="findSelectedClasses" resultMap="BaseResultMap">
+        SELECT classes.id id,classes.`name`
+        from course
+        join open on course.id = open.course_id
+        join classes on open.class_id = classes.id
+        where course.id = #{id}
+    </select>
+
+    <select id="findUnselectClasses" resultMap="BaseResultMap">
+        select classes.id id ,classes.name name from classes
+        where classes.id not in
+        (
+        SELECT classes.id
+        from course
+        left join open
+        on course.id = open.course_id
+        left join classes
+        on open.class_id = classes.id
+        where course.id = #{id} and classes.id is not null
+        )
+    </select>
+    
+    <select id="findUnPublishClasses" resultMap="BaseResultMap">
+        SELECT
+            classes.id id,
+            classes.`name`
+        FROM
+            course
+            JOIN OPEN ON course.id = OPEN.course_id
+            JOIN classes ON OPEN.class_id = classes.id
+        WHERE
+            course.id = #{courseId}
+            AND classes.id NOT IN (
+            SELECT
+                class_homework.class_id
+            FROM
+                class_homework
+            WHERE
+            class_homework.homework_id = #{homeworkId}
+            )
+    </select>
+
 </mapper>

@@ -15,8 +15,8 @@ public class TokenInterceptor implements HandlerInterceptor {
         }
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json; charset=utf-8");
-        // 获取请求头token,去掉前后的双引号
-        String token = request.getHeader("Authorization").replace("\"", "");
+        // 获取请求头token
+        String token = request.getHeader("Authorization");
         System.out.println(token);
         if(token != null){
             // 验证token

@@ -2,6 +2,7 @@ package com.fifth.domain;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.Serializable;
 
@@ -20,7 +21,7 @@ public class StudentAnswer implements Serializable {
 
     private Integer result;//是否正确1-正确 2-错误
 
-    private String score;//题目得分
+    private Float score;//题目得分
 
     private String studentNo;//学生id
 
@@ -61,12 +62,12 @@ public class StudentAnswer implements Serializable {
     }
 
     //get方法
-    public String getScore() {
+    public Float getScore() {
         return score;
     }
 
     //set方法
-    public void setScore(String score) {
+    public void setScore(Float score) {
         this.score = score;
     }
 
