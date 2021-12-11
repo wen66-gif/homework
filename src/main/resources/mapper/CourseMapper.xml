@@ -15,8 +15,8 @@
     </resultMap>
 
 
-    <select id="findByTeacher" resultMap="BaseResultMap" parameterType="java.lang.String">
-        SELECT course.id `courseId`, course.`name` AS `courseName`,classes.id `classId`,classes.`name` `className`,teacher.`name` `teacherName`
+    <select id="teachCourseList" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT course.id `courseId`, course.`name` `courseName`,classes.id `classId`,classes.`name` `className`,teacher.`name` `teacherName`
         FROM teacher JOIN teach ON teacher.`no` = teach.tno
         left JOIN `open` ON teach.course_id = `open`.course_id
         left JOIN classes ON `open`.class_id = classes.id
@@ -26,13 +26,8 @@
     <select id="stuCourseList" resultMap="BaseResultMap">
         SELECT course.id courseId, course.`name` courseName, teacher.`name` teacherName, classes.`name` className
         FROM course, teacher, classes, student, `open`,teach
-        WHERE student.class_id = classes.id AND classes.id=`open`.class_id AND course.id=`open`.course_id AND teacher.`no`=teach.tno AND teach.course_id=course.id
+        WHERE  classes.id=`open`.class_id AND course.id=`open`.course_id AND teacher.`no`=teach.tno AND teach.course_id=course.id
         AND student.`no`=#{username}
-    </select>
-    <select id="teachCourseList" resultMap="BaseResultMap">
-        SELECT course.id courseId, course.`name` courseName, teacher.`name` teacherName, classes.`name` className
-        FROM course, teacher, teach, classes, `open`
-        WHERE teach.tno = teacher.`no` AND teach.course_id = course.id AND classes.id = `open`.class_id AND `open`.course_id = course.id AND teacher.`no` = #{username}
     </select>
     <insert id="saveCourse" parameterType="String">
         insert into course(name) values (#{name})

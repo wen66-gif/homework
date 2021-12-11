@@ -46,7 +46,7 @@ public class TeacherController {
     // 登录
     @PostMapping("/login")
     public Result login(@RequestParam String no, @RequestParam String password){
-        System.out.println("进入teacherController");
+//        System.out.println("进入teacherController");
         if (teacherMapper.login(no,password)>0){
             // 登录成功，（用户名及账号）生成token返回给前端
             return Result.success(TokenUtil.createJwtToken(no,getUserName(no)));
@@ -56,15 +56,15 @@ public class TeacherController {
     }
 
     // 获取当前教师全部课程
-    @GetMapping("/mycourse")
-    public Result findMyCourse(){
-        System.out.println("进入teacherController\n"+"userId:"+CurrentUser.getCurrentUserId());
-        List<Course> courses = courseMapper.findByTeacher(CurrentUser.getCurrentUserId());
-        Map<String,Object> map = new HashMap<>();
-        map.put("courses",courses);
-        map.put("userName",CurrentUser.getCurrentUserName());
-        return Result.success(map);
-    }
+//    @GetMapping("/mycourse")
+//    public Result findMyCourse(){
+//        System.out.println("进入teacherController\n"+"userId:"+CurrentUser.getCurrentUserId());
+//        List<Course> courses = courseMapper.findByTeacher(CurrentUser.getCurrentUserId());
+//        Map<String,Object> map = new HashMap<>();
+//        map.put("courses",courses);
+//        map.put("userName",CurrentUser.getCurrentUserName());
+//        return Result.success(map);
+//    }
 
     //新增课程
     @PostMapping("/mycourse")

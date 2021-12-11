@@ -32,7 +32,7 @@
         <div style="margin: 10px 30px">
             <a-breadcrumb>
                 <a-breadcrumb-item><router-link :to="{
-                        path:'/mycourse'
+                        path:'/tea_course'
                     }">我教的课</router-link></a-breadcrumb-item>
                 <a-breadcrumb-item><router-link :to="{
                     path:'/course_manage',

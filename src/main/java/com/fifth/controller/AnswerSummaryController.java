@@ -30,6 +30,7 @@ public class AnswerSummaryController {
     @Autowired
     private AnswerSummaryMapper answerSummaryMapper;
 
+    // 查看提交列表
     @GetMapping("/findList")
     public Result findSubmitList(
             @RequestParam int pageNum,

@@ -34,8 +34,13 @@ public class Homework implements Serializable {
     private Integer courseId;//课程id
 
     @TableField(exist = false)
+    private ClassHomework classHomework;//作业发布
+
+    @TableField(exist = false)
     private List<Classes> classesList;
 
+    @TableField(exist = false)
+    private  AnswerSummary answerSummary;
     public Homework() {
     }
 
@@ -51,6 +56,22 @@ public class Homework implements Serializable {
         this.name = name;
         this.score = score;
         this.updateTime = updateTime;
+    }
+
+    public AnswerSummary getAnswerSummary() {
+        return answerSummary;
+    }
+
+    public void setAnswerSummary(AnswerSummary answerSummary) {
+        this.answerSummary = answerSummary;
+    }
+
+    public ClassHomework getClassHomework() {
+        return classHomework;
+    }
+
+    public void setClassHomework(ClassHomework classHomework) {
+        this.classHomework = classHomework;
     }
 
     public Date getUpdateTime() {

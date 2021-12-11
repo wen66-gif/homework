@@ -9,10 +9,10 @@
                 </a>
                 <a-menu slot="overlay">
                     <a-menu-item>
-                        <a href="javascript:;">修改密码</a>
+                        <span>修改密码</span>
                     </a-menu-item>
                     <a-menu-item>
-                        <a href="javascript:;">退出登录</a>
+                        <span @click="logout">退出登录</span>
                     </a-menu-item>
                 </a-menu>
             </a-dropdown>
@@ -21,12 +21,28 @@
 </template>
 
 <script>
-    import {mapState} from "vuex";
+    import {mapMutations, mapState} from "vuex";
 
     export default {
         name: "Header",
         computed:{
             ...mapState(['username'])
+        },
+        methods:{
+            ...mapMutations(['CLEAR_TOKEN','CLEAR_USERNAME']),
+            logout(){
+                // 清除token
+                this.CLEAR_TOKEN()
+                // 清除用户名
+                this.CLEAR_USERNAME()
+                // 跳转到登录页
+                this.$router.push({
+                    path:'/login',
+                    query:{
+                        activeKey:this.$cookie.get("role")
+                    }
+                })
+            }
         }
     }
 </script>

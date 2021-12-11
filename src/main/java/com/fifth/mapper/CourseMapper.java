@@ -17,15 +17,15 @@ public interface CourseMapper extends BaseMapper<Course> {
 
     /**
      * 查询学生课程
-     * @param username 账号标记
+     * @param no 账号标记
      * @return
      */
-    List<Course> stuCourseList(String username);
+    List<Course> stuCourseList(String no);
 
     /**
      * 查询教师课程
-     * @param username 账号标记
+     * @param no 账号标记
      * @return
      */
-    List<Course> teachCourseList(String username);
+    List<Course> teachCourseList(String no);
 }

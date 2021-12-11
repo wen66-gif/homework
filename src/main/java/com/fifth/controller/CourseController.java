@@ -4,11 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.fifth.common.Result;
 import com.fifth.domain.Course;
 import com.fifth.mapper.CourseMapper;
+import com.fifth.utils.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /****
  * @Author:Anonym
@@ -25,22 +28,25 @@ public class CourseController {
     private CourseMapper courseMapper;
 
     /**
-     * 根据用户查询Course 分页查询
+     * 根据用户查询Course
      *
      * @param role
-     * @param username
      * @return
      */
-    @GetMapping("/{role}/{username}")
-    public Result selectCourseList(@PathVariable("role") Integer role,
-                                   @PathVariable("username") String username) {
+    @GetMapping("/allCourse")
+    public Result allCourse(@RequestParam int role) {
         List<Course> courseList = null;
 
-        if (StringUtils.isEmpty(role) || StringUtils.isEmpty(username)) return Result.error("-1", "系统暂时繁忙,请稍后重试");
-        if (1 == role) courseList = courseMapper.stuCourseList(username);
-        if (2 == role) courseList = courseMapper.teachCourseList(username);
-
-        return Result.success(courseList);
+        if (StringUtils.isEmpty(role))
+            return Result.error("-1", "系统暂时繁忙,请稍后重试");
+        if (1 == role)
+            courseList = courseMapper.stuCourseList(CurrentUser.getCurrentUserId());
+        else if (2 == role)
+            courseList = courseMapper.teachCourseList(CurrentUser.getCurrentUserId());
+        Map<String,Object> map = new HashMap<>();
+        map.put("courses",courseList);
+        map.put("userName",CurrentUser.getCurrentUserName());
+        return Result.success(map);
     }
 
     /***

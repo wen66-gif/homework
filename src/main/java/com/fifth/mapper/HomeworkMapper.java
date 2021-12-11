@@ -1,6 +1,9 @@
 package com.fifth.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fifth.domain.AnswerSummary;
 import com.fifth.domain.Homework;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -15,11 +18,11 @@ import java.util.List;
 public interface HomeworkMapper extends BaseMapper<Homework> {
     /**
      * 查询 所学/所教 课程HomeWork
-     * @param sno
+     * @param no
      * @param courseId
      * @return
      */
-    List<Homework> selectHomeWork(String sno, Integer courseId);
+    IPage<Homework> selectHomeWork(Page<?> page, String no, Integer courseId);
 
     // 教师端查询某一课程下所有作业
     List<Homework> allPublishHomework(int courseId);

@@ -3,6 +3,9 @@ import App from './App.vue'
 import store from './store'
 import router from './router'
 import axios from 'axios'
+// 配置cookie
+import cookie from 'vue-cookie'
+Vue.prototype.$cookie = cookie
 import { ConfigProvider } from 'ant-design-vue'
 
 //引入antd

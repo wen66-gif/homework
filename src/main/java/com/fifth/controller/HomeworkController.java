@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fifth.common.Result;
 import com.fifth.domain.*;
 import com.fifth.mapper.*;
+import com.fifth.utils.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,17 +40,33 @@ public class HomeworkController {
     private AnswerSummaryMapper answerSummaryMapper;
 
     /**
-     * 查询 所学/所教 课程HomeWork
+     * 查询 所学 课程HomeWork
      *
-     * @param sno      用户标记
      * @param courseId 课程号
      * @return
      */
-    @GetMapping("/{sno}/{courseId}")
-    public Result selectWorkList(@PathVariable String sno,
-                                 @PathVariable Integer courseId) {
-        List<Homework> workList = homeworkMapper.selectHomeWork(sno, courseId);
-        return Result.success(workList);
+    @GetMapping("/myHomework")
+    public Result selectWorkList(@RequestParam Integer courseId,
+                                 @RequestParam int pageNum,
+                                 @RequestParam int pageSize,
+                                 @RequestParam(required = false) String sortField,
+                                 @RequestParam(required = false) String sortOrder) {
+        Page<Homework> page = new Page<>(pageNum, pageSize);
+        OrderItem orderItem = new OrderItem();
+        orderItem.setColumn("publishTime");
+        if (sortOrder!=null){
+            if (sortOrder.equals("ascend")){
+                orderItem.setAsc(true);
+            }
+            else {
+                orderItem.setAsc(false);
+            }
+        }
+        List<OrderItem> orderItems = new ArrayList<>();
+        orderItems.add(orderItem);
+        page.setOrders(orderItems);
+        IPage<Homework> homeworkIPage = homeworkMapper.selectHomeWork(page, CurrentUser.getCurrentUserId(), courseId);
+        return Result.success(homeworkMapper.selectHomeWork(page, CurrentUser.getCurrentUserId(), courseId));
     }
 
     // 查询一个课程已发布的所有作业
@@ -291,6 +309,7 @@ public class HomeworkController {
             return Result.error("-1","提交失败");
         }
     }
+
     /***
      * 根据ID查询Homework数据
      * @param homeworkId

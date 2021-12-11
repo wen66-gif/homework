@@ -4,16 +4,34 @@
     <resultMap id="BaseResultMap" type="com.fifth.domain.Homework">
         <id column="homeworkId" jdbcType="INTEGER" property="id"/>
         <result column="homeworkName" jdbcType="VARCHAR" property="name"/>
+        <association property="classHomework" javaType="com.fifth.domain.ClassHomework">
+            <result property="publishTime" column="publishTime"/>
+        </association>
+        <association property="answerSummary" javaType="com.fifth.domain.AnswerSummary">
+            <result property="submitTime" column="submitTime"/>
+            <result property="score" column="score"/>
+        </association>
         <collection property="classesList" ofType="com.fifth.domain.Classes">
             <id column="classId" jdbcType="INTEGER" property="id"/>
             <result column="className" jdbcType="VARCHAR" property="name"/>
         </collection>
+
     </resultMap>
-    <select id="selectHomeWork" resultType="com.fifth.domain.Homework">
-        SELECT homework.`name`, homework.create_time createTime
-        FROM homework, class_course, student
-        WHERE homework.id = class_course.homework_id AND class_course.class_id = student.class_id
-        AND student.`no`= #{param1} AND homework.course_id = #{param2}
+    <select id="selectHomeWork" resultMap="BaseResultMap">
+        SELECT
+            homework.id homeworkId,
+            homework.`name` homeworkName,
+            class_homework.publish_time publishTime,
+            answer_summary.submit_time submitTime,
+            answer_summary.score score
+        FROM
+            homework
+            LEFT JOIN class_homework ON homework.id = class_homework.homework_id
+            LEFT JOIN student ON class_homework.class_id = student.class_id
+            LEFT JOIN answer_summary ON answer_summary.homework_id = homework.id
+        WHERE
+            student.`no` = #{no}
+            AND homework.course_id = #{courseId}
     </select>
     
     <select id="allPublishHomework" resultMap="BaseResultMap">

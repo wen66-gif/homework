@@ -5,7 +5,7 @@
             <a-breadcrumb>
                 <a-breadcrumb-item>
                     <router-link :to="{
-                            path:'/mycourse'
+                            path:'/tea_course'
                         }">我教的课</router-link>
                 </a-breadcrumb-item>
                 <a-breadcrumb-item>

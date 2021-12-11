@@ -51,8 +51,7 @@ public class LoginController {
                     return Result.success(TokenUtil.createJwtToken(student.getNo(), student.getName()));
                 break;
             case 2:
-                Teacher teacher = teacherMapper.selectOne(new QueryWrapper<>(
-                        new Teacher(userName, null, password)));
+                Teacher teacher = teacherMapper.selectOne(new QueryWrapper<Teacher>().eq("no",userName).eq("password",password));
                 if (!StringUtils.isEmpty(teacher))
                     return Result.success(TokenUtil.createJwtToken(teacher.getNo(), teacher.getName()));
                 break;
@@ -63,7 +62,7 @@ public class LoginController {
                     return Result.success(TokenUtil.createJwtToken(String.valueOf(manager.getId()), manager.getAccount()));
                 break;
             default:
-                return Result.error("-1", "用户名或密码错误");
+                return Result.error("-1", "出错啦！");
         }
         return Result.error("-1", "用户名或密码错误");
     }

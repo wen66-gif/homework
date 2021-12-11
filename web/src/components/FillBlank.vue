@@ -72,7 +72,7 @@
                     var id  = this.blankId[i].id
                     value[id] = this.blankContent[i]
                 }
-                console.log(value)
+                // console.log(value)
                 // 等待页面渲染完成
                 this.$nextTick(()=>{
                     // 将数据渲染到表单
