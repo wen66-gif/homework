@@ -12,10 +12,12 @@ export default new Vuex.Store({
     homeworkId:'',
     // 题目列表
     questionList:[],
-    //非选择题
+    // 非选择题
     unChoiceType:[],
-    //选择题
+    // 选择题
     choiceType:[],
+    // 学生答案
+    studentAnswer:[],
     // 当前用户名
     username:sessionStorage.getItem("username"),
     // 存储token
@@ -36,10 +38,22 @@ export default new Vuex.Store({
       state.username = sessionStorage.getItem("username")
     },
 
+    // 清除用户名信息
+    CLEAR_USERNAME(state){
+      sessionStorage.clear()
+      state.username = ''
+    },
+
     // 保存token
     SET_TOKEN(state,value){
       localStorage.setItem("Authorization",value)
       state.Authorization = value
+    },
+
+    // 清除token
+    CLEAR_TOKEN(state){
+      localStorage.clear()
+      state.Authorization = ''
     },
 
     // 添加题目
@@ -89,6 +103,20 @@ export default new Vuex.Store({
       state.unChoiceType = []
       state.questionList = []
     },
+
+    // 添加学生答案
+    ADD_STUDENTANSWER(state,value){
+      state.studentAnswer.push(value)
+    },
+
+    // 修改学生答案
+    UPDATE_STUDENTANSWER(state,value){
+      state.studentAnswer = state.studentAnswer.map(answer => {
+        return (answer.choiceId === value.choiceId && value.choiceId) || (answer.unchoiceId === value.unchoiceId && value.unchoiceId)
+            ? value
+            : answer;
+      });
+    }
 
 
   },

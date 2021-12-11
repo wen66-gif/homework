@@ -2,21 +2,24 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
 import Home from '../views/Home.vue'
-import MyCourse from "../views/MyCourse";
+import TCourse from "../views/TCourse";
 import Login from "../views/Login";
 import CourseManage from "../views/CourseManage";
 import EditHomework from "../views/EditHomework";
 import SubmitList from "../views/SubmitList";
 import CheckHomework from "../views/CheckHomework";
 import HomeworkRep from "../views/HomeworkRep";
+import SCourse from "../views/SCourse";
+import MyHomework from "../views/MyHomework";
+import DoHomework from "../views/DoHomework";
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    name: "mycourse",
-    path: '/mycourse',
-    component: MyCourse,
+    name: "tcourse",
+    path: '/tea_course',
+    component: TCourse,
     meta:{title:"我教的课",isAuth:true}
   },
   {
@@ -55,6 +58,26 @@ const routes = [
     path:'/homeworkrep',
     component:HomeworkRep,
     meta:{isAuth:true,title:"作业库"}
+  },
+
+  // 学生端
+  {
+    name: "scourse",
+    path: '/stu_course',
+    component: SCourse,
+    meta:{title:"我学的课",isAuth:true}
+  },
+  {
+    name: "myHomework",
+    path: '/myHomework',
+    component: MyHomework,
+    meta:{title:"我的作业",isAuth:true}
+  },
+  {
+    name: "doHomework",
+    path: '/doHomework',
+    component: DoHomework,
+    meta:{title:"作业作答",isAuth:true}
   }
 
 ]
@@ -65,8 +88,8 @@ const router = new VueRouter({
   routes
 })
 
-/*router.beforeEach((to,from,next)=>{
-  console.log("前置路由守卫",to,from)
+router.beforeEach((to,from,next)=>{
+  // console.log("前置路由守卫",to,from)
   if (to.meta.isAuth){    // 判断是否需要权限控制
     let token = store.state.Authorization;
     if (token === null || token === '') {
@@ -78,7 +101,7 @@ const router = new VueRouter({
   }else {
     next()
   }
-})*/
+})
 
 
 // 全局后置路由守卫，初始化及跳转后调用
