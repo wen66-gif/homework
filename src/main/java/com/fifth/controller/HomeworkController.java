@@ -12,10 +12,11 @@ import com.fifth.domain.*;
 import com.fifth.mapper.*;
 import com.fifth.utils.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 @RequestMapping("/homework")
@@ -39,19 +40,27 @@ public class HomeworkController {
 
     /**
      * 做作业了
-     * @param map
+     * @param list
      * @return
      */
-    @PutMapping("/doHW")
-    public Result doHomework(@RequestBody Map<String, Object> map) {
-
-        //1 判断数据是否合法...
-        //2 进行基础评分
-        //3 插入数据返回处理结果
-        if (studentAnswerMapper.insert(new StudentAnswer(null,(String)map.get("answer"),null,null,(String)map.get("studentNO"),(Integer)map.get("homeworkId"),(Integer) map.get("choiceId"),(Integer) map.get("unchoiceId")))>0) {
-            return Result.success();
-        }
-        return Result.error("00","提交失败");
+    @PostMapping("/doHomeWork")
+    public Result doHomework(@RequestBody List<StudentAnswer> list) {
+        //2 进行基础评分 插入数据返回处理结果
+        AtomicReference<Float> score = new AtomicReference<>(0f);
+        list.stream().forEach(studentAnswer -> {
+            if (StringUtils.isEmpty(studentAnswer.getChoiceId())) {
+                Unchoice unchoice = unchoiceMapper.selectById(studentAnswer.getUnchoiceId());
+                if (studentAnswer.getAnswer().equalsIgnoreCase(unchoice.getTrueAnswer())) score.set((score.get()+unchoice.getScore()));
+            } else {
+                Choice choice = choiceMapper.selectById(studentAnswer.getChoiceId());
+                if (studentAnswer.getAnswer().equalsIgnoreCase(choice.getTrueAnswer())) score.set((score.get() + choice.getScore()));
+            }
+            studentAnswer.setStudentNo(CurrentUser.getCurrentUserId());
+            studentAnswer.setScore(score.get());
+            studentAnswerMapper.insert(studentAnswer);
+            score.set(0f);
+        });
+        return Result.success();
     }
 
     /**

@@ -2,10 +2,7 @@ package com.fifth.common;
 
 import java.io.Serializable;
 
-/**
- * @author: Anonym
- * @data: 2021/11/25 12:13
- */
+
 public class UserInfo implements Serializable {
     private Integer role;
     private String userName;

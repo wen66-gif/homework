@@ -110,6 +110,9 @@
                // },100)
                // 或者直接调用
                 // axios.post("")
+               axios.post("homework/doHomeWork",this.studentAnswer).then(res=>{
+                   console.log(res.data)
+               })
            }
        }
 

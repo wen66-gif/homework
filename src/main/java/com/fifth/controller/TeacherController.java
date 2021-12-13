@@ -49,7 +49,7 @@ public class TeacherController {
 //        System.out.println("进入teacherController");
         if (teacherMapper.login(no,password)>0){
             // 登录成功，（用户名及账号）生成token返回给前端
-            return Result.success(TokenUtil.createJwtToken(no,getUserName(no)));
+            return Result.success(TokenUtil.createJwtToken(no,getUserName(no),2));
         }
         else
             return Result.error("-1","用户名或密码错误");

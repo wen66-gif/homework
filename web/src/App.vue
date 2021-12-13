@@ -1,7 +1,7 @@
 <template>
   <a-config-provider :locale="zh_CN">
     <div id="app">
-      <Header/>
+      <Header v-if="$route.meta.isAuth"/>
       <router-view/>
     </div>
   </a-config-provider>
