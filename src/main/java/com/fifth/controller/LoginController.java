@@ -48,18 +48,18 @@ public class LoginController {
                 Student student = studentMapper.selectOne(new QueryWrapper<>(
                         new Student(userName, null, password)));
                 if (!StringUtils.isEmpty(student))
-                    return Result.success(TokenUtil.createJwtToken(student.getNo(), student.getName()));
+                    return Result.success(TokenUtil.createJwtToken(student.getNo(), student.getName(),1));
                 break;
             case 2:
                 Teacher teacher = teacherMapper.selectOne(new QueryWrapper<Teacher>().eq("no",userName).eq("password",password));
                 if (!StringUtils.isEmpty(teacher))
-                    return Result.success(TokenUtil.createJwtToken(teacher.getNo(), teacher.getName()));
+                    return Result.success(TokenUtil.createJwtToken(teacher.getNo(), teacher.getName(),2));
                 break;
             case 3:
                 Manager manager = managerMapper.selectOne(new QueryWrapper<>(
                         new Manager(userName, password)));
                 if (!StringUtils.isEmpty(manager))
-                    return Result.success(TokenUtil.createJwtToken(String.valueOf(manager.getId()), manager.getAccount()));
+                    return Result.success(TokenUtil.createJwtToken(String.valueOf(manager.getId()), manager.getAccount(),3));
                 break;
             default:
                 return Result.error("-1", "出错啦！");

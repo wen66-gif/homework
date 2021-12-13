@@ -22,13 +22,14 @@ public class TokenUtil {
      * 生成token
      * @param userId
      * @param userName
+     * @Param userRole
      * @return
      */
-    public static String createJwtToken(String userId,String userName){
+    public static String createJwtToken(String userId,String userName,int userRole){
         String issuer="llw";
         String subject="lin";
         long ttlMillis=36000000;//10个小时后过期
-        return createJwtToken(userId,userName,issuer,subject,ttlMillis);
+        return createJwtToken(userId,userName,userRole,issuer,subject,ttlMillis);
     }
 
     /**
@@ -39,7 +40,7 @@ public class TokenUtil {
      * @param ttlMillis 签发时间（有效时间，过期会报错）
      * @return token string
      */
-    public static String createJwtToken(String userId, String username,String issuer,String subject,long ttlMillis){
+    public static String createJwtToken(String userId, String username,int userRole,String issuer,String subject,long ttlMillis){
         //签名算法，将token进行签名
         SignatureAlgorithm signatureAlgorithm=SignatureAlgorithm.HS256;
         //生成签发时间
@@ -51,6 +52,7 @@ public class TokenUtil {
         Map<String,Object> m = new HashMap<>();
         m.put("userId",userId);
         m.put("userName",username);
+        m.put("userRole",userRole);
         //创建token
         JwtBuilder builder=Jwts.builder().setClaims(m)
                 .setIssuedAt(now)
@@ -81,14 +83,7 @@ public class TokenUtil {
         }
     }
     public static void main(String[] args){
-        String token = TokenUtil.createJwtToken("20191001","llw");
-        System.out.println(token);
-        Claims claims = parseJWT(token);
-        System.out.println(claims.get("userId"));
-        System.out.println(claims.get("userName"));
-        System.out.println(claims.getIssuedAt());
-        System.out.println(claims.getExpiration());
-        String toke = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyTmFtZSI6IjEyMzQ1NiIsImV4cCI6MTYzNjY2NjY2NiwidXNlcklkIjoiMjAxOTEwMDEiLCJpYXQiOjE2MzY2MzA2NjZ9.6XaiRiFWmQt46RfJEfYztHS-fux8V3T6nwpUYSdx7bM";
+        String toke = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyTmFtZSI6ImFkbWluIiwiZXhwIjoxNjM5MzI0OTM3LCJ1c2VySWQiOiIxIiwiaWF0IjoxNjM5Mjg4OTM3fQ.lVTHV0sxxPq6VZQNlpi_NtqhlJa5XVVHstHZzPqzcB4";
         System.out.println("userId:"+TokenUtil.parseJWT(toke).get("userId"));
         System.out.println("userName:"+TokenUtil.parseJWT(toke).get("userName"));
     }

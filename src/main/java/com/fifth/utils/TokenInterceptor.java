@@ -25,6 +25,7 @@ public class TokenInterceptor implements HandlerInterceptor {
                 // 将用户账号及用户名保存到CurrentUser
                 CurrentUser.setCurrentUserId(TokenUtil.parseJWT(token).get("userId").toString());
                 CurrentUser.setCurrentUserName(TokenUtil.parseJWT(token).get("userName").toString());
+                CurrentUser.setCurrentUserRole(Integer.parseInt(TokenUtil.parseJWT(token).get("userRole").toString()) );
                 System.out.println("通过拦截器");
                 return true;
             }
