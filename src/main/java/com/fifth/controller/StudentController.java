@@ -32,9 +32,10 @@ public class StudentController {
      * @return
      */
     @GetMapping("/findPage")
-    public Result selectAll() {
+    public Result selectAll(@RequestParam int current,
+                            @RequestParam int pageSize) {
         //调用studentMapper实现根据主键删除
-        Page<Student> studentPage = studentMapper.selectPage(new Page<Student>(), null);
+        Page<Student> studentPage = studentMapper.selectPage(new Page<>(current,pageSize), new QueryWrapper<>());
         return Result.success(studentPage);
     }
 

@@ -29,6 +29,20 @@ public class StudentAnswer implements Serializable {
 
     private Integer choiceId;//选择题id（二选一）
 
+    public StudentAnswer() {
+    }
+
+    public StudentAnswer(Integer id, String answer, Integer result, Float score, String studentNo, Integer homeworkId, Integer choiceId, Integer unchoiceId) {
+        this.id = id;
+        this.answer = answer;
+        this.result = result;
+        this.score = score;
+        this.studentNo = studentNo;
+        this.homeworkId = homeworkId;
+        this.choiceId = choiceId;
+        this.unchoiceId = unchoiceId;
+    }
+
     private Integer unchoiceId;//非选择题id（二选一）
 
     //get方法

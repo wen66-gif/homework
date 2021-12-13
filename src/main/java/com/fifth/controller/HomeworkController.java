@@ -15,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/homework")
@@ -38,6 +36,23 @@ public class HomeworkController {
 
     @Autowired
     private AnswerSummaryMapper answerSummaryMapper;
+
+    /**
+     * 做作业了
+     * @param map
+     * @return
+     */
+    @PutMapping("/doHW")
+    public Result doHomework(@RequestBody Map<String, Object> map) {
+
+        //1 判断数据是否合法...
+        //2 进行基础评分
+        //3 插入数据返回处理结果
+        if (studentAnswerMapper.insert(new StudentAnswer(null,(String)map.get("answer"),null,null,(String)map.get("studentNO"),(Integer)map.get("homeworkId"),(Integer) map.get("choiceId"),(Integer) map.get("unchoiceId")))>0) {
+            return Result.success();
+        }
+        return Result.error("00","提交失败");
+    }
 
     /**
      * 查询 所学 课程HomeWork
