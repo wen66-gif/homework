@@ -51,11 +51,13 @@ public class WebConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         List<String> excludePath = new ArrayList<>();
         //排除拦截，除了注册登录(此时还没token)，其他都拦截
-        excludePath.add("/test");
         excludePath.add("/register");  //登录
         excludePath.add("/login/*");     //注册
         excludePath.add("/static/**");  //静态资源
         excludePath.add("/assets/**");  //静态资源
+        excludePath.add("/allClasses"); // 获取班级
+        excludePath.add("/saveStudent");
+        excludePath.add("/saveTeacher");
 
         registry.addInterceptor(tokenInterceptor())
                 .addPathPatterns("/**")
