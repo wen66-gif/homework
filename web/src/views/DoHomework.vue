@@ -97,22 +97,30 @@
             this.SET_COURSEID(this.$route.query.courseId)
         },
        methods:{
-            ...mapMutations(['ADD_STUDENTANSWER','SET_COURSEID']),
+            ...mapMutations(['ADD_STUDENTANSWER','SET_COURSEID','CLEAR_STUDENTANSWER']),
            // 提交作业
            submitHomework(){
-                //将下面这个学生答案传到student_answer
-                console.log(this.studentAnswer)
-               // 我前面是用失去焦点时保存输入的答案，最后一道题答完直接点提交，
-               // 他要先去保存答案，再执行提交，如果保存的时候出错，可以试一下用延时函数，让他先保存完再提交
-               // 延时函数如下
-               // setTimeout(()=>{
-               //     axios.post()
-               // },100)
-               // 或者直接调用
-                // axios.post("")
-               axios.post("homework/doHomeWork",this.studentAnswer).then(res=>{
-                   console.log(res.data)
-               })
+                var i = 0;
+                for(i; i < this.studentAnswer.length; i++){
+                    if (!this.studentAnswer[i].answer){
+                        this.$message.error("请完成全部试题再提交")
+                        return
+                    }
+                }
+                    //将下面这个学生答案传到student_answer
+                    console.log(this.studentAnswer)
+                    axios.post("homework/doHomeWork/"+this.$route.query.homeworkId,this.studentAnswer).then(res=>{
+                        if (res.data.code==="0"){
+                            this.$message.success("提交成功")
+                            this.CLEAR_STUDENTANSWER()
+                            this.$router.push({
+                                path:'/MyHomework',
+                                query:{
+                                    courseId:this.courseId
+                                }
+                            })
+                        }
+                    })
            }
        }
 

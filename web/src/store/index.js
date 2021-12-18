@@ -116,6 +116,11 @@ export default new Vuex.Store({
             ? value
             : answer;
       });
+    },
+
+    //清除缓存的学生答案
+    CLEAR_STUDENTANSWER(state){
+      state.studentAnswer.length = 0
     }
 
 

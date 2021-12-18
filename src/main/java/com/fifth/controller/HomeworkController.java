@@ -43,9 +43,11 @@ public class HomeworkController {
      * @param list
      * @return
      */
-    @PostMapping("/doHomeWork")
-    public Result doHomework(@RequestBody List<StudentAnswer> list) {
+    @PostMapping("/doHomeWork/{id}")
+    public Result doHomework(@RequestBody List<StudentAnswer> list,
+                             @PathVariable int id) {
         //2 进行基础评分 插入数据返回处理结果
+        AtomicReference<Float> totalScore = new AtomicReference<>((float) 0);
         AtomicReference<Float> score = new AtomicReference<>(0f);
         list.stream().forEach(studentAnswer -> {
             if (StringUtils.isEmpty(studentAnswer.getChoiceId())) {
@@ -58,8 +60,10 @@ public class HomeworkController {
             studentAnswer.setStudentNo(CurrentUser.getCurrentUserId());
             studentAnswer.setScore(score.get());
             studentAnswerMapper.insert(studentAnswer);
+            totalScore.updateAndGet(v -> new Float((float) (v + score.get())));
             score.set(0f);
         });
+        answerSummaryMapper.insert(new AnswerSummary(CurrentUser.getCurrentUserId(),id,new Date(),Float.parseFloat(totalScore.toString())));
         return Result.success();
     }
 
