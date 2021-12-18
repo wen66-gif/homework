@@ -90,7 +90,7 @@ public class HomeworkController {
         orderItems.add(orderItem);
         page.setOrders(orderItems);
         IPage<Homework> homeworkIPage = homeworkMapper.selectHomeWork(page, CurrentUser.getCurrentUserId(), courseId);
-        return Result.success(homeworkMapper.selectHomeWork(page, CurrentUser.getCurrentUserId(), courseId));
+        return Result.success(homeworkIPage);
     }
 
     // 查询一个课程已发布的所有作业

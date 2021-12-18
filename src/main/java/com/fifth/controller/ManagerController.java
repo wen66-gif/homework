@@ -1,9 +1,11 @@
 package com.fifth.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.fifth.common.Result;
 import com.fifth.domain.Manager;
 import com.fifth.mapper.ManagerMapper;
+import com.fifth.utils.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +24,12 @@ public class ManagerController {
 
     @Autowired
     private ManagerMapper managerMapper;
+
+    // 获取管理员姓名
+    @GetMapping("/getManagerName")
+    public Result getManagerName(){
+        return Result.success(CurrentUser.getCurrentUserName());
+    }
 
     /***
      * 根据ID删除数据

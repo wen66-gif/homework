@@ -2,19 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fifth.mapper.TeacherMapper">
     <resultMap id="BaseResultMap" type="com.fifth.domain.Teacher">
-        <id column="id" jdbcType="INTEGER" property="id" />
+        <id column="no" jdbcType="INTEGER" property="no" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="sex" jdbcType="INTEGER" property="sex" />
         <result column="password" jdbcType="VARCHAR" property="password" />
     </resultMap>
 
-    <select id="login" parameterType="java.lang.String" resultType="int">
-       select count(*) from teacher where no = #{no} and password = #{password}
-    </select>
-
     <select id="getUserName" parameterType="java.lang.String" resultType="String">
        select name from teacher where no = #{no}
     </select>
 
+    <select id="findOneTeacher" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from teacher where no = #{search} or name = #{search}
+    </select>
 
+    <update id="updateTeacher">
+        UPDATE teacher
+
+        SET no=#{no}, name=#{name}, sex=#{sex}, password=#{password}
+
+        WHERE no=#{oldNo}
+
+    </update>
 </mapper>

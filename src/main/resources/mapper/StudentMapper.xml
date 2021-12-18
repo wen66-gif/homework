@@ -4,21 +4,28 @@
     <resultMap id="BaseResultMap" type="com.fifth.domain.Student">
         <id column="no" property="no" />
         <result column="studentName" property="name" />
+        <result column="sex" property="sex" />
+        <result column="password" property="password" />
+        <result column="class_id" property="classId"/>
         <association property="classes" javaType="com.fifth.domain.Classes">
             <result column="className" property="name"/>
         </association>
     </resultMap>
 
-    <select id="getStudent" resultMap="BaseResultMap">
-        SELECT
-            s.NO NO,
-            s.NAME studentName,
-            c.NAME className
-        FROM
-            student s,
-            classes c
-        WHERE
-            s.NO = #{studentNo}
-            AND s.class_id = c.id
+    <select id="getAllStudents" resultMap="BaseResultMap">
+        select no,student.name studentName,sex,password,class_id,classes.name className
+         from student,classes where student.class_id = classes.id
     </select>
+
+
+    <select id="findOneStudent" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select no,student.name studentName,sex,password,class_id,classes.name className
+         from student,classes where student.class_id = classes.id and no = #{no} or student.name = #{name}
+    </select>
+
+    <update id="updateStudent">
+        UPDATE student
+        SET no=#{no}, name=#{name}, sex=#{sex}, password=#{password}, class_id=#{classId}
+        WHERE no=#{oldNo}
+    </update>
 </mapper>

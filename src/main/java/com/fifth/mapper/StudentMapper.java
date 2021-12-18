@@ -1,8 +1,14 @@
 package com.fifth.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fifth.domain.Homework;
 import com.fifth.domain.Student;
+import com.fifth.domain.Teacher;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.Map;
 
 /****
  * @Author:Anonym
@@ -11,5 +17,11 @@ import org.apache.ibatis.annotations.Mapper;
  *****/
 @Mapper
 public interface StudentMapper extends BaseMapper<Student> {
-    Student getStudent(String no);
+    IPage<Student> getAllStudents(Page<?> page);
+
+    // 查询一个学生
+    Student findOneStudent(String search);
+
+    // 更新学生信息
+    int updateStudent(Map paramMap);
 }

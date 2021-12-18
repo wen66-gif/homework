@@ -12,15 +12,15 @@ import HomeworkRep from "../views/HomeworkRep";
 import SCourse from "../views/SCourse";
 import MyHomework from "../views/MyHomework";
 import DoHomework from "../views/DoHomework";
+import ManagerHome from "../views/ManagerHome";
+import Regist from "../views/Regist";
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    name: "tcourse",
-    path: '/tea_course',
-    component: TCourse,
-    meta:{title:"我教的课",isAuth:true}
+    path: '/',
+    redirect: "/login",
   },
   {
     name:"login",
@@ -29,10 +29,24 @@ const routes = [
     meta: {title: "登录",isAuth :false}
   },
   {
+    name:"regist",
+    path:'/regist',
+    component: Regist,
+    meta: {title: "注册",isAuth :false}
+  },
+
+  {
+    name: "tcourse",
+    path: '/tea_course',
+    component: TCourse,
+    meta:{title:"我教的课",isAuth:true}
+  },
+
+  {
     name:'CourseManage',
     path:'/course_manage',
     component:CourseManage,
-    meta:{isAuth:true}
+    meta:{title:"课程管理",isAuth:true}
   },
   {
     name:'EditHomework',
@@ -78,6 +92,14 @@ const routes = [
     path: '/doHomework',
     component: DoHomework,
     meta:{title:"作业作答",isAuth:true}
+  },
+
+    // 管理端
+  {
+    name: "managerHome",
+    path: '/managerHome',
+    component: ManagerHome,
+    meta:{title:"管理主页",isAuth:true}
   }
 
 ]

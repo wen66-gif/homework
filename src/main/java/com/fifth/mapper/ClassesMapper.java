@@ -18,4 +18,7 @@ public interface ClassesMapper extends BaseMapper<Classes> {
 
     // 查询未发布的班级
     List<Classes> findUnPublishClasses(int courseId, int homeworkId);
+
+    // 查询一个班级
+    Classes findOneClass(String search);
 }
