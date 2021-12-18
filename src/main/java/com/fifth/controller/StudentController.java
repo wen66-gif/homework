@@ -1,17 +1,25 @@
 package com.fifth.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fifth.common.Result;
 import com.fifth.domain.Student;
+import com.fifth.domain.Teacher;
 import com.fifth.mapper.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /****
  * @Author:Anonym
@@ -20,84 +28,87 @@ import java.util.List;
  *****/
 
 @RestController
-@RequestMapping("/student")
+@RequestMapping("/")
 @CrossOrigin
 public class StudentController {
 
     @Autowired
     private StudentMapper studentMapper;
 
-    /**
-     * 分页查询
-     * @return
-     */
-    @GetMapping("/findPage")
-    public Result selectAll(@RequestParam int current,
-                            @RequestParam int pageSize) {
-        //调用studentMapper实现根据主键删除
-        Page<Student> studentPage = studentMapper.selectPage(new Page<>(current,pageSize), new QueryWrapper<>());
+    // 获取全部教师信息
+    @GetMapping("/getAllStudents")
+    public Result getAllStudents(@RequestParam int pageNum,
+                                 @RequestParam int pageSize,
+                                 @RequestParam(required = false) String sortField,
+                                 @RequestParam(required = false) String sortOrder){
+        Page<Student> page = new Page<>(pageNum, pageSize);
+        OrderItem orderItem = new OrderItem();
+        if (sortField!=null){
+            orderItem.setColumn(sortField);
+        }
+        if (sortOrder!=null){
+            if (sortOrder.equals("ascend")){
+                orderItem.setAsc(true);
+            }
+            else {
+                orderItem.setAsc(false);
+            }
+        }
+        List<OrderItem> orderItems = new ArrayList<>();
+        orderItems.add(orderItem);
+        page.setOrders(orderItems);
+        IPage<Student> studentPage = studentMapper.getAllStudents(page);
         return Result.success(studentPage);
     }
+    // 新增一个学生
+    @PostMapping("/saveStudent")
+    public Result saveStudent(@RequestBody Student student){
+        try {
+            if (studentMapper.insert(student) > 0)
+                return Result.success();
+            else
+                return Result.error("-1","新增学生失败");
+        }catch (Exception e){
+            return Result.error("-2","学号已存在");
+        }
 
-    /***
-     * 根据ID删除数据
-     * @param id
-     * @return
-     */
-    @DeleteMapping(value = "/{id}")
-    public Result delete(@PathVariable String id) {
-        //调用studentMapper实现根据主键删除
-        if (studentMapper.deleteById(id) > 0) return Result.success();
-        return Result.error("-1", "删除失败");
     }
 
-    /***
-     * 修改Student数据
-     * @param student
-     * @param id
-     * @return
-     */
-    @PutMapping(value = "/{id}")
-    public Result update(@RequestBody Student student, @PathVariable String id) {
-        //设置主键值
-        student.setNo(id);
-        //调用studentMapper实现修改Student
-        if (studentMapper.update(student, new UpdateWrapper<Student>().eq("no", id)) > 0) return Result.success();
-        return Result.error("-1", "修改失败");
-    }
-
-    /***
-     * 新增Student数据
-     * @param student
-     * @return
-     */
-    @PostMapping
-    public Result add(@RequestBody Student student) {
-        //调用studentMapper实现添加Student
-        if (studentMapper.insert(student) > 0) return Result.success();
-        return Result.error("-1", "新增失败");
-    }
-
-    /***
-     * 根据ID查询Student数据
-     * @param studentNo
-     * @return
-     */
-    @GetMapping("/getStudent")
-    public Result<Student> findById(@RequestParam String studentNo) {
-        //调用studentMapper实现根据主键查询Student
-        Student student = studentMapper.getStudent(studentNo);
+    // 查询一个学生
+    @GetMapping("/findOneStudent")
+    public Result findOneStudent(@RequestParam String search){
+        Student student = studentMapper.findOneStudent(search);
         return Result.success(student);
     }
 
-    /***
-     * 查询Student全部数据
-     * @return
-     */
-    @GetMapping
-    public Result<List<Student>> findAll() {
-        //调用studentMapper实现查询所有Student
-        List<Student> list = studentMapper.selectList(null);
-        return Result.success(list);
+    // 更新学生信息
+    @PutMapping("/updateStudent")
+    public Result updateStudent(@RequestBody JSONObject jsonObject) {
+        try {
+            Student oldStudent = JSON.parseObject(JSON.toJSONString(jsonObject.get("oldValue")), Student.class);
+            Student newStudent = JSON.parseObject(JSON.toJSONString(jsonObject.get("newValue")), Student.class);
+            Map paramMap = new HashMap();
+            paramMap.put("no", newStudent.getNo());
+            paramMap.put("name", newStudent.getName());
+            paramMap.put("sex", newStudent.getSex());
+            paramMap.put("password", newStudent.getPassword());
+            paramMap.put("classId", newStudent.getClassId());
+            paramMap.put("oldNo", oldStudent.getNo());
+            if (studentMapper.updateStudent(paramMap) > 0) {
+                return Result.success();
+            }
+            else return Result.error("-1","更新失败");
+        } catch (Exception e) {
+            return Result.error("-2", "学号已存在");
+        }
+    }
+    // 删除学生
+    @DeleteMapping("/deleteStudent")
+    public Result deleteStudent(@RequestParam String no){
+        if (studentMapper.delete(new QueryWrapper<Student>().eq("no",no)) > 0){
+            return Result.success();
+        }
+        else
+            return Result.error("-1","删除失败");
     }
 }

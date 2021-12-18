@@ -1,7 +1,12 @@
 package com.fifth.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fifth.common.Result;
 import com.fifth.domain.*;
 import com.fifth.mapper.*;
@@ -42,29 +47,6 @@ public class TeacherController {
     public String getUserName(String no) {
         return teacherMapper.getUserName(no);
     }
-
-    // 登录
-    @PostMapping("/login")
-    public Result login(@RequestParam String no, @RequestParam String password){
-//        System.out.println("进入teacherController");
-        if (teacherMapper.login(no,password)>0){
-            // 登录成功，（用户名及账号）生成token返回给前端
-            return Result.success(TokenUtil.createJwtToken(no,getUserName(no),2));
-        }
-        else
-            return Result.error("-1","用户名或密码错误");
-    }
-
-    // 获取当前教师全部课程
-//    @GetMapping("/mycourse")
-//    public Result findMyCourse(){
-//        System.out.println("进入teacherController\n"+"userId:"+CurrentUser.getCurrentUserId());
-//        List<Course> courses = courseMapper.findByTeacher(CurrentUser.getCurrentUserId());
-//        Map<String,Object> map = new HashMap<>();
-//        map.put("courses",courses);
-//        map.put("userName",CurrentUser.getCurrentUserName());
-//        return Result.success(map);
-//    }
 
     //新增课程
     @PostMapping("/mycourse")
@@ -184,5 +166,81 @@ public class TeacherController {
         }
     }
 
+    // 获取全部教师信息
+    @GetMapping("/getAllTeachers")
+    public Result getAllTeachers(@RequestParam int pageNum,
+                                 @RequestParam int pageSize,
+                                 @RequestParam(required = false) String sortField,
+                                 @RequestParam(required = false) String sortOrder){
+        Page<Teacher> page = new Page<>(pageNum, pageSize);
+        OrderItem orderItem = new OrderItem();
+        if (sortField!=null){
+            orderItem.setColumn(sortField);
+        }
+        if (sortOrder!=null){
+            if (sortOrder.equals("ascend")){
+                orderItem.setAsc(true);
+            }
+            else {
+                orderItem.setAsc(false);
+            }
+        }
+        List<OrderItem> orderItems = new ArrayList<>();
+        orderItems.add(orderItem);
+        page.setOrders(orderItems);
+        Page<Teacher> teacherPage = teacherMapper.selectPage(page, null);
+        return Result.success(teacherPage);
+    }
+
+    // 新增一个教师
+    @PostMapping("/saveTeacher")
+    public Result saveTeacher(@RequestBody Teacher teacher){
+        try {
+            if (teacherMapper.insert(teacher) > 0)
+                return Result.success();
+            else
+                return Result.error("-1","新增教师失败");
+        }catch (Exception e){
+            return Result.error("-2","工号已存在");
+        }
+    }
+
+    // 查询一个教师
+    @GetMapping("/findOneTeacher")
+    public Result findOneTeacher(@RequestParam String search){
+        Teacher teacher = teacherMapper.findOneTeacher(search);
+        return Result.success(teacher);
+    }
+
+    // 更新教师信息
+    @PutMapping("/updateTeacher")
+    public Result updateTeacher(@RequestBody JSONObject jsonObject){
+        try {
+            Teacher oldTeacher = JSON.parseObject(JSON.toJSONString(jsonObject.get("oldValue")),Teacher.class);
+            Teacher newTeacher = JSON.parseObject(JSON.toJSONString(jsonObject.get("newValue")),Teacher.class);
+            Map paramMap = new HashMap();
+            paramMap.put("no",newTeacher.getNo());
+            paramMap.put("name",newTeacher.getName());
+            paramMap.put("sex",newTeacher.getSex());
+            paramMap.put("password",newTeacher.getPassword());
+            paramMap.put("oldNo",oldTeacher.getNo());
+            if (teacherMapper.updateTeacher(paramMap) > 0){
+                return Result.success();
+            }
+            return Result.error("-1","更新失败");
+        }catch (Exception e){
+            return Result.error("-2","工号已存在");
+        }
+    }
+
+    // 删除教师
+    @DeleteMapping("/deleteTeacher")
+    public Result deleteTeacher(@RequestParam String no){
+        if (teacherMapper.delete(new QueryWrapper<Teacher>().eq("no",no)) > 0){
+            return Result.success();
+        }
+        else
+            return Result.error("-1","删除失败");
+    }
 
 }
