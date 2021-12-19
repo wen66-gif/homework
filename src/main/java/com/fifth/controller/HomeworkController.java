@@ -46,6 +46,8 @@ public class HomeworkController {
     @PostMapping("/doHomeWork/{id}")
     public Result doHomework(@RequestBody List<StudentAnswer> list,
                              @PathVariable int id) {
+        //判断是否已作答
+        boolean isAnswer = studentAnswerMapper.selectList(new QueryWrapper<StudentAnswer>().eq("student_no",CurrentUser.getCurrentUserId())).size()<=0 ? true : false;
         //2 进行基础评分 插入数据返回处理结果
         AtomicReference<Float> totalScore = new AtomicReference<>((float) 0);
         AtomicReference<Float> score = new AtomicReference<>(0f);
@@ -59,11 +61,32 @@ public class HomeworkController {
             }
             studentAnswer.setStudentNo(CurrentUser.getCurrentUserId());
             studentAnswer.setScore(score.get());
-            studentAnswerMapper.insert(studentAnswer);
+            if (isAnswer) studentAnswerMapper.insert(studentAnswer);
+            else {
+                if (StringUtils.isEmpty(studentAnswer.getChoiceId())) {
+                    studentAnswerMapper.update(studentAnswer,
+                            new UpdateWrapper<StudentAnswer>()
+                                    .eq("homework_id",studentAnswer.getHomeworkId())
+                                    .eq("student_no", CurrentUser.getCurrentUserId())
+                                    .eq("unchoice_id", studentAnswer.getUnchoiceId()));
+                } else {
+                    studentAnswerMapper.update(studentAnswer,
+                            new UpdateWrapper<StudentAnswer>()
+                                    .eq("homework_id",studentAnswer.getHomeworkId())
+                                    .eq("student_no", CurrentUser.getCurrentUserId())
+                                    .eq("choice_id", studentAnswer.getChoiceId()));
+
+                }
+
+            }
             totalScore.updateAndGet(v -> new Float((float) (v + score.get())));
             score.set(0f);
         });
-        answerSummaryMapper.insert(new AnswerSummary(CurrentUser.getCurrentUserId(),id,new Date(),Float.parseFloat(totalScore.toString())));
+        if (isAnswer) answerSummaryMapper.insert(new AnswerSummary(CurrentUser.getCurrentUserId(),id,new Date(),Float.parseFloat(totalScore.toString())));
+        else {
+            AnswerSummary answerSummary = new AnswerSummary(CurrentUser.getCurrentUserId(),id,new Date(),Float.parseFloat(totalScore.toString()));
+            answerSummaryMapper.update(answerSummary, new UpdateWrapper<AnswerSummary>().eq("student_no",CurrentUser.getCurrentUserId()).eq("homework_id", list.get(0).getHomeworkId()));
+        }
         return Result.success();
     }
 

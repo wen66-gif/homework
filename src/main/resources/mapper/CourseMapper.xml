@@ -27,7 +27,7 @@
         SELECT course.id courseId, course.`name` courseName, teacher.`name` teacherName, classes.`name` className
         FROM course, teacher, classes, student, `open`,teach
         WHERE  classes.id=`open`.class_id AND course.id=`open`.course_id AND teacher.`no`=teach.tno AND teach.course_id=course.id
-        AND student.`no`=#{username}
+        AND student.`no`=#{username} AND course.id in (SELECT `open`.course_id FROM `open`, student WHERE `open`.class_id = student.class_id and student.`no` = #{username})
     </select>
     <insert id="saveCourse" parameterType="String">
         insert into course(name) values (#{name})

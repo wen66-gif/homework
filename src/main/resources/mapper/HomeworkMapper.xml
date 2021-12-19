@@ -18,20 +18,12 @@
 
     </resultMap>
     <select id="selectHomeWork" resultMap="BaseResultMap">
-        SELECT
-            homework.id homeworkId,
-            homework.`name` homeworkName,
-            class_homework.publish_time publishTime,
-            answer_summary.submit_time submitTime,
-            answer_summary.score score
-        FROM
-            homework
-            LEFT JOIN class_homework ON homework.id = class_homework.homework_id
-            LEFT JOIN student ON class_homework.class_id = student.class_id
-            LEFT JOIN answer_summary ON answer_summary.homework_id = homework.id
-        WHERE
-            student.`no` = #{no}
-            AND homework.course_id = #{courseId}
+select homework.id homeworkId,homework.`name` homeworkName,class_homework.publish_time publishTime,answer_summary.submit_time submitTime,answer_summary.score score
+FROM homework
+LEFT JOIN class_homework on homework.id = class_homework.homework_id
+LEFT JOIN answer_summary on answer_summary.homework_id = homework.id AND answer_summary.student_no = #{param2}
+WHERE  homework.course_id = #{param3}
+AND class_homework.class_id = (SELECT student.class_id FROM student WHERE student.`no` = #{param2})
     </select>
     
     <select id="allPublishHomework" resultMap="BaseResultMap">
