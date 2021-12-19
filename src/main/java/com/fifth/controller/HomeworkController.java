@@ -47,7 +47,7 @@ public class HomeworkController {
     public Result doHomework(@RequestBody List<StudentAnswer> list,
                              @PathVariable int id) {
         //判断是否已作答
-        boolean isAnswer = studentAnswerMapper.selectList(new QueryWrapper<StudentAnswer>().eq("student_no",CurrentUser.getCurrentUserId())).size()<=0 ? true : false;
+        boolean isAnswer = studentAnswerMapper.selectList(new QueryWrapper<StudentAnswer>().eq("student_no",CurrentUser.getCurrentUserId()).eq("homework_id",id)).size()<=0 ? true : false;
         //2 进行基础评分 插入数据返回处理结果
         AtomicReference<Float> totalScore = new AtomicReference<>((float) 0);
         AtomicReference<Float> score = new AtomicReference<>(0f);
