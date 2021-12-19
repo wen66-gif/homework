@@ -206,10 +206,10 @@ public class TeacherController {
     }
 
     // 查询一个教师
-    @GetMapping("/findOneTeacher")
-    public Result findOneTeacher(@RequestParam String search){
-        Teacher teacher = teacherMapper.findOneTeacher(search);
-        return Result.success(teacher);
+    @GetMapping("/findTeacherByKey")
+    public Result findTeacherByKey(@RequestParam String search){
+        List<Teacher> teacherList = teacherMapper.findTeacherByKey(search);
+        return Result.success(teacherList);
     }
 
     // 更新教师信息

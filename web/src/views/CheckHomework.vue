@@ -132,7 +132,7 @@
                 this.homeworkName = res.data.data
             })
             // 获取作答学生信息
-            axios.get("/student/getStudent",{
+            axios.get("/getStudent",{
                 params:{studentNo:this.$route.query.studentNo}
             }).then(res=>{
                 this.student = res.data.data

@@ -265,13 +265,13 @@
             },
             // 查询一个教师
             load(){
-                axios.get("/findOneTeacher",{
+                axios.get("/findTeacherByKey",{
                     params:{
                         search:this.search
                     }
                 }).then(res=>{
                     this.data.length = 0
-                    this.data.push(res.data.data)
+                    this.data = res.data.data
                     this.data = this.data.filter(n => n)
                     this.parseSex()
                 })

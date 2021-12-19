@@ -35,7 +35,7 @@ public class StudentController {
     @Autowired
     private StudentMapper studentMapper;
 
-    // 获取全部教师信息
+    // 获取全部学生信息
     @GetMapping("/getAllStudents")
     public Result getAllStudents(@RequestParam int pageNum,
                                  @RequestParam int pageSize,
@@ -75,9 +75,9 @@ public class StudentController {
     }
 
     // 查询一个学生
-    @GetMapping("/findOneStudent")
-    public Result findOneStudent(@RequestParam String search){
-        Student student = studentMapper.findOneStudent(search);
+    @GetMapping("/findStudentByKey")
+    public Result findStudentByKey(@RequestParam String search){
+        List<Student> student = studentMapper.findStudentByKey(search);
         return Result.success(student);
     }
 
@@ -110,5 +110,11 @@ public class StudentController {
         }
         else
             return Result.error("-1","删除失败");
+    }
+
+    @GetMapping("/getStudent")
+    public Result<Student> findById(@RequestParam String studentNo) {
+        Student student = studentMapper.getStudent(studentNo);
+        return Result.success(student);
     }
 }

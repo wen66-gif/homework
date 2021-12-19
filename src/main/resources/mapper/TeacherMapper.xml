@@ -12,7 +12,7 @@
        select name from teacher where no = #{no}
     </select>
 
-    <select id="findOneTeacher" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="findTeacherByKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select * from teacher where no = #{search} or name = #{search}
     </select>
 
