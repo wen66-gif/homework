@@ -28,4 +28,17 @@
         SET no=#{no}, name=#{name}, sex=#{sex}, password=#{password}, class_id=#{classId}
         WHERE no=#{oldNo}
     </update>
+
+    <select id="getStudent" resultMap="BaseResultMap">
+        SELECT
+            s.NO NO,
+            s.NAME studentName,
+            c.NAME className
+        FROM
+            student s,
+            classes c
+        WHERE
+            s.NO = #{studentNo}
+            AND s.class_id = c.id
+    </select>
 </mapper>
