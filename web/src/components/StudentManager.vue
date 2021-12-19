@@ -316,13 +316,13 @@
             },
             // 查询一个学生
             load(){
-                axios.get("/findOneStudent",{
+                axios.get("/findStudentByKey",{
                     params:{
                         search:this.search
                     }
                 }).then(res=>{
                     this.data.length = 0
-                    this.data.push(res.data.data)
+                    this.data = res.data.data
                     this.data = this.data.filter(n => n)
                     this.parseSex()
                 })

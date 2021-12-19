@@ -18,7 +18,7 @@
     </select>
 
 
-    <select id="findOneStudent" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="findStudentByKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select no,student.name studentName,sex,password,class_id,classes.name className
          from student,classes where student.class_id = classes.id and no = #{no} or student.name = #{name}
     </select>

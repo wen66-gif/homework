@@ -75,9 +75,9 @@ public class StudentController {
     }
 
     // 查询一个学生
-    @GetMapping("/findOneStudent")
-    public Result findOneStudent(@RequestParam String search){
-        Student student = studentMapper.findOneStudent(search);
+    @GetMapping("/findStudentByKey")
+    public Result findStudentByKey(@RequestParam String search){
+        List<Student> student = studentMapper.findStudentByKey(search);
         return Result.success(student);
     }
 
